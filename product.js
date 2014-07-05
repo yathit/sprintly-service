@@ -16,17 +16,14 @@
   sprintly.Product = function(service, product) {
     console.assert(product.id);
     /**
-     * @protected
      * @type {sprintly.Service}
      */
     this.service = service;
     /**
-     * @protected
      * @type {Sprintly.Product}
      */
     this.product = product;
     /**
-     * @protected
      * @type {ydn.db.Storage}
      */
     this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
