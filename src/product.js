@@ -24,6 +24,7 @@
 
 
 goog.provide('sprintly.Product');
+goog.require('sprintly.Entity');
 goog.require('sprintly.Service');
 
 
@@ -53,7 +54,12 @@ sprintly.Product = function(service, product) {
    */
   this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
 
-  this.Item = new Entity(this, 'item');
+  /**
+   * Item entity.
+   * @type {sprintly.Entity}
+   * @final
+   */
+  this.Item = new sprintly.Entity(this, 'item');
 };
 
 
@@ -101,4 +107,5 @@ sprintly.Product.schema = {
     }]
   }]
 };
+
 

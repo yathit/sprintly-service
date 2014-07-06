@@ -17,7 +17,7 @@ Build
 
 Generate documentation.
 
-    jsdoc *.js -t ~/work/jaguarjs-jsdoc/ -c jsdoc.json -d ./doc
+    jsdoc src/*.js -t ~/work/jaguarjs-jsdoc/ -c jsdoc.json -d ./doc
     # only for first time
     cp -r ~/work/jaguarjs-jsdoc/static/ ./doc/
     

@@ -3,6 +3,9 @@
     "allowUnknownTags" : true
   },
   "plugins": ["plugins/markdown"],
+  "source": {
+    "exclude": ["src/deps.js"]
+  },
   "templates": {
     "cleverLinks": true,
     "monospaceLinks": true,
