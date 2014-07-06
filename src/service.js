@@ -36,7 +36,7 @@ sprintly.Service = function(baseUrl) {
 /**
  * @define {string} sprint.ly backend base URL.
  */
-sprintly.Service.BASE_URL = 'https://sprint.ly/api/';
+sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
 
 
 /**

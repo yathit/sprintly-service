@@ -61,6 +61,42 @@ sprintly.Entity.Options;
 
 
 /**
+ * Log operation.
+ * @enum {string}
+ */
+sprintly.Entity.Operation = {
+  ADD: 'add',
+  PUT: 'put',
+  DELETE: 'del'
+};
+
+
+/**
+ * Log history for WAL.
+ * @param {sprintly.Entity.Operation} op
+ * @param {string=} id
+ * @returns {Promise}
+ * @private
+ */
+sprintly.Entity.prototype.logHistory = function(op, id) {
+  var record = {
+    'op': op,
+    'entity': this.name,
+    'timestamp': new Date().getTime()
+  };
+  if (op == sprintly.Entity.Operation.ADD) {
+    return this.db.put('_history', record);
+  } else {
+    record['id'] = id;
+    return this.db.get(this.name, id).done(function(old) {
+      record['old'] = old;
+      return this.db.put('_history', record);
+    }, this)
+  }
+};
+
+
+/**
  * Recursively fetch entries from server to local.
  * @param {number} offset query offset.
  * @returns {Promise} resolved with number of entries fetched.
@@ -123,11 +159,31 @@ sprintly.Entity.prototype.get = function(id) {
 
 
 /**
- * Add item.
- * @param item
+ * Send POST request to server.
+ * @param {Object} record
+ * @returns {Promise}
+ * @private
  */
-sprintly.Entity.prototype.add = function(item) {
+sprintly.Entity.prototype.post_ = function(record) {
+  var path = this.name + '.json';
+  if (record['number']) {
+    path = this.name + '/' + record['number'] + '.json';
+  }
+  return this.product.request(path, 'POST', null, JSON.stringify(record));
+};
 
+
+/**
+ * Add item.
+ * @param {Object} record record value.
+ */
+sprintly.Entity.prototype.add = function(record) {
+  this.logHistory(sprintly.Entity.Operation.ADD).done(function(x) {
+    record['_history_sequence'] = x;
+    this.post_(record).done(function(id) {
+
+    }, this);
+  }, this);
 };
 
 

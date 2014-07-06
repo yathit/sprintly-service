@@ -41,12 +41,15 @@ CRUD operation on [`Entity`](http://dev.yathit.com/sprintly/api-doc/sprintly.Ent
 ### Query    
     
 Use [`ydn.db.Storage`](http://dev.yathit.com/api-reference/ydn-db/storage.html) object on `product.db` to query data without hitting backend service.
+
+    # update cache to get fresh data, this will hit backend service
+    product.Item.update();
     
     product.db.from('items').where('assigned_to', '=', 123).list().then(function(x) {
       console.log(x);
     });
     
-All available queries can be found on `sprintly.Product.schema`.   
+Database table name is entity name (in plural) in sprint.ly API path. All available index queries can be found on `sprintly.Product.schema`.  
  
 ### Loader
  

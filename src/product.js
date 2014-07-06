@@ -68,14 +68,16 @@ sprintly.Product = function(service, product) {
  * @param {string} path
  * @param {string=} method
  * @param {Object=} params
+ * @param {(Object|string)=} body
  * @returns {Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
  * `headers`, `body`, `status`.
  */
-sprintly.Product.prototype.request = function(path, method, params) {
+sprintly.Product.prototype.request = function(path, method, params, body) {
   var req = {
     path: 'products/' + this.product.id + '/' + path,
     method: method,
-    params: params
+    params: params,
+    body: body
   };
   return this.service.request(req);
 };
@@ -101,6 +103,9 @@ sprintly.Product.prototype.get = function(path, params) {
 };
 
 
+/**
+ * Dispose this. Safe to call multiple times.
+ */
 sprintly.Product.prototype.dispose = function() {
   if (this.db) {
     this.db.close();
@@ -116,6 +121,12 @@ sprintly.Product.prototype.dispose = function() {
  */
 sprintly.Product.schema = {
   stores: [{
+    name: '_history',
+    indexes: [{
+      name: 'key',
+      keyPath: ['entity', 'id']
+    }]
+  }, {
     name: 'items',
     keyPath: 'number',
     indexes: [{
