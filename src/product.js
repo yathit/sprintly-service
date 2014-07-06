@@ -122,6 +122,8 @@ sprintly.Product.prototype.dispose = function() {
 sprintly.Product.schema = {
   stores: [{
     name: '_history',
+    keyPath: 'sequence',
+    autoIncrement: true,
     indexes: [{
       name: 'key',
       keyPath: ['entity', 'id']
@@ -129,6 +131,7 @@ sprintly.Product.schema = {
   }, {
     name: 'items',
     keyPath: 'number',
+    autoIncrement: true,
     indexes: [{
       name: 'tags',
       multiEntry: true

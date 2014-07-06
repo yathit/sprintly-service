@@ -47,12 +47,12 @@ sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
  *   params: ?Object,
  *   body: string|Object
  * }} options
- * @returns {Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
+ * @returns {Q.Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
  * `headers`, `body`, `status`.
  */
 sprintly.Service.prototype.request = function(options) {
   var me = this;
-  return new Promise(function(resolve, reject) {
+  return new Q.Promise(function(resolve, reject) {
     if (!me.authHeader) {
       var e = new Error('Not login');
       e.name = 'LoginError';

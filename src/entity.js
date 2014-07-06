@@ -17,7 +17,7 @@
 // limitations under the License.
 
 /**
- * @fileOverview Represent sprint.ly API Entity providing sprint.ly CRUD requests and persistent.
+ * @fileoverview Represent sprint.ly API Entity providing sprint.ly CRUD requests and persistent.
  *
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
@@ -47,6 +47,22 @@ sprintly.Entity = function(product, name) {
    * @final
    */
   this.name = name;
+
+  var stores = sprintly.Product.schema.stores;
+  var schema;
+  for (var i = 0; i < stores.length; i++) {
+    if (stores[i].name == name) {
+      schema = stores[i];
+      break;
+    }
+  }
+
+  /**
+   * Entity name.
+   * @type {StoreSchema}
+   * @final
+   */
+  this.schema = schema;
 };
 
 
@@ -72,34 +88,70 @@ sprintly.Entity.Operation = {
 
 
 /**
+ * Extract key from record.
+ * @param {Object} record
+ * @return {string|number|undefined} key extracted from the record.
+ */
+sprintly.Entity.prototype.getKey = function(record) {
+  if (record) {
+    return record[this.schema.keyPath];
+  }
+  return undefined;
+};
+
+
+/**
  * Log history for WAL.
  * @param {sprintly.Entity.Operation} op
- * @param {string=} id
- * @returns {Promise}
+ * @param {Object=} opt_obj new object.
+ * @return {ydn.db.Request} resolved with history record.
  * @private
  */
-sprintly.Entity.prototype.logHistory = function(op, id) {
+sprintly.Entity.prototype.logHistory_ = function(op, opt_obj) {
   var record = {
     'op': op,
     'entity': this.name,
+    'id': id,
     'timestamp': new Date().getTime()
   };
-  if (op == sprintly.Entity.Operation.ADD) {
-    return this.db.put('_history', record);
-  } else {
-    record['id'] = id;
-    return this.db.get(this.name, id).done(function(old) {
-      record['old'] = old;
-      return this.db.put('_history', record);
-    }, this)
+  if (opt_obj) {
+    record['new'] = opt_obj;
   }
+  var id = this.getKey(opt_obj);
+  if (id != null) {
+    record['id'] = id;
+  }
+  if (op == sprintly.Entity.Operation.ADD) {
+    return this.product.db.put('_history', record).done(function(seq) {
+      record['sequence'] = seq;
+      return record;
+    });
+  } else {
+    return this.product.db.get(this.name, id).done(function(old) {
+      record['old'] = old;
+      return this.product.db.put('_history', record).done(function(seq) {
+        record['sequence'] = seq;
+        return record;
+      });
+    }, this);
+  }
+};
+
+
+/**
+ * Remove history log.
+ * @param {string} id history sequence id.
+ * @return {ydn.db.Request}
+ */
+sprintly.Entity.prototype.clearHistory = function(id) {
+  return this.product.db.remove('_history', id);
 };
 
 
 /**
  * Recursively fetch entries from server to local.
  * @param {number} offset query offset.
- * @returns {Promise} resolved with number of entries fetched.
+ * @return {Promise} resolved with number of entries fetched.
  * @private
  */
 sprintly.Entity.prototype.fetch_ = function(offset) {
@@ -110,7 +162,7 @@ sprintly.Entity.prototype.fetch_ = function(offset) {
       me.product.db.put(me.name, entries);
       return me.fetch_(offset + entries.length).then(function(cnt) {
         return cnt + n;
-      })
+      });
     }
     return n;
   });
@@ -119,6 +171,7 @@ sprintly.Entity.prototype.fetch_ = function(offset) {
 
 /**
  * Update local cache.
+ * @return {Promise} resolved with number of records updated.
  */
 sprintly.Entity.prototype.update = function() {
   return this.product.db.count(this.name).done(function(cnt) {
@@ -138,7 +191,7 @@ sprintly.Entity.prototype.invalidate = function() {
 /**
  * Get Item. Local data, if available, is notified in progress and server validated data in resolve callback.
  * @param {number} id
- * @returns {Q.Promise} return a `Promise` object with progress notification.
+ * @return {Q.Promise} return a `Promise` object with progress notification.
  */
 sprintly.Entity.prototype.get = function(id) {
   var deferred = Q.defer();
@@ -161,7 +214,7 @@ sprintly.Entity.prototype.get = function(id) {
 /**
  * Send POST request to server.
  * @param {Object} record
- * @returns {Promise}
+ * @return {Promise}
  * @private
  */
 sprintly.Entity.prototype.post_ = function(record) {
@@ -176,14 +229,58 @@ sprintly.Entity.prototype.post_ = function(record) {
 /**
  * Add item.
  * @param {Object} record record value.
+ * @return {Promise}
  */
 sprintly.Entity.prototype.add = function(record) {
-  this.logHistory(sprintly.Entity.Operation.ADD).done(function(x) {
-    record['_history_sequence'] = x;
-    this.post_(record).done(function(id) {
+  var me = this;
+  var db = this.product.db;
+  return db.add(this.name, record).done(function(temp_id) {
+    record[me.schema.keyPath] = temp_id;
+    return me.logHistory_(sprintly.Entity.Operation.ADD, record).done(function(seq) {
+      if (navigator.onLine) {
+        return me.post_(record).done(function(resp) {
+          if (resp.status == 201) {
+            record = resp.body;
+            // clean up load and store new record from server.
+            me.product.db.run(function(tx_db) {
+              me.product.db.remove(me.name, temp_id);
+              me.product.db.remove('_history', seq);
+              me.product.db.add(me.name, record);
+            }, [me.name, '_history'], 'readwrite');
+            return record;
+          }
+        });
+      }
+      return record;
+    });
+  });
+};
 
-    }, this);
-  }, this);
+
+/**
+ * Update item.
+ * @param {Object} record record value.
+ * @return {Promise}
+ */
+sprintly.Entity.prototype.put = function(record) {
+  var me = this;
+  return this.logHistory_(sprintly.Entity.Operation.PUT, record).done(function(seq) {
+    record['_history_sequence'] = seq;
+    return me.product.db.put(me.name, record).done(function(temp_id) {
+      if (navigator.onLine) {
+        return me.post_(record).done(function(resp) {
+          if (resp.status == 201) {
+            record = resp.body;
+            me.clearHistory(seq);
+            me.product.db.run(function(tx_db) {
+              me.product.db.remove(me.name, temp_id);
+              me.product.db.add(me.name, record);
+            }, [me.name], 'readwrite');
+          }
+        });
+      }
+    });
+  });
 };
 
 

@@ -12,11 +12,18 @@ goog.provide('sprintly');
 goog.require('sprintly.Product');
 goog.require('sprintly.Service');
 
+
+/**
+ * @type {sprintly.Service} main service.
+ * @final
+ * @export
+ */
 sprintly.service = new sprintly.Service();
 
 
 /**
  * @type {Object.<sprintly.Product>} products belong to login user.
+ * @export
  */
 sprintly.products = {};
 
@@ -25,11 +32,11 @@ sprintly.products = {};
  * @param {Array.<Sprintly.Product>} products list of product resources.
  * @private
  */
-sprintly.prepareProducts = function (products) {
+sprintly.prepareProducts = function(products) {
   for (var id in sprintly.products) {
-    if (!products.some(function (p) {
-          return p.id == id;
-        })) {
+    if (!products.some(function(p) {
+      return p.id == id;
+    })) {
       delete this.products[id];
     }
   }
@@ -48,6 +55,7 @@ sprintly.prepareProducts = function (products) {
  * @param {string} password sprint.ly API key
  * @param {boolean=} remember keep username and password.
  * @return {Promise}
+ * @export
  */
 sprintly.login = function(username, password, remember) {
   if (remember === false) {
@@ -68,7 +76,7 @@ sprintly.login = function(username, password, remember) {
       delete sprintly.products[id];
     }
     window.dispatchEvent(new CustomEvent('sprintly-login-fail'));
-  })
+  });
 };
 
 
@@ -90,7 +98,8 @@ sprintly.dispatchReady = function(profile) {
 /**
  * Run sprintly loader.
  * This will dispatch `ready` event if user already login on previous session.
- * @returns {Promise} If user has valid session, resolve user profile, otherwise reject with `false`.
+ * @return {Promise} If user has valid session, resolve user profile, otherwise reject with `false`.
+ * @export
  */
 sprintly.run = function() {
   var profile = localStorage.getItem('user-profile');
@@ -108,7 +117,7 @@ sprintly.run = function() {
           } else {
             resolve(true);
           }
-        })
+        });
       }));
     }
     return Promise.all(db_ready).then(function() {
@@ -122,8 +131,4 @@ sprintly.run = function() {
 
 
 goog.exportSymbol('sprintly', sprintly);
-goog.exportProperty('sprintly.products', sprintly, sprintly.products);
-goog.exportProperty('sprintly.service', sprintly, sprintly.service);
-goog.exportProperty('sprintly.run', sprintly, sprintly.run);
-goog.exportProperty('sprintly.login', sprintly, sprintly.login);
 
