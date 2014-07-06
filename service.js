@@ -25,9 +25,13 @@
     /**
      * List of products.
      * @type {Array.<Sprintly.Product>}
-     * @protected
      */
     this.products = null;
+    /**
+     * Default sprint.ly product.
+     * @type {number}
+     */
+    this.defaultProduct = 0;
   };
 
 
@@ -125,6 +129,9 @@
     respond.then(function(products) {
       me.products = products;
       me.username = user;
+      if (me.defaultProduct >= products.length) {
+        me.defaultProduct = 0;
+      }
     }, function() {
       me.authHeader = null;
     });
@@ -140,6 +147,7 @@
     this.authHeader = profile.authentication;
     this.username = profile.username;
     this.products = profile.products;
+    this.defaultProduct = profile.defaultProduct;
   };
 
 
@@ -151,7 +159,8 @@
     return {
       authentication: this.authHeader,
       username: this.username,
-      products: this.products
+      products: this.products,
+      defaultProduct: this.defaultProduct
     }
   };
 
