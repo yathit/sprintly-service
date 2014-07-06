@@ -7,6 +7,17 @@ This javascript module is a wrapper on [Sprint.ly API](https://sprintly.uservoic
 
 Target browsers are Chrome 35+, Firefox 30+, Safari 8+ and IE 18+. 
 
+    
+Documentation
+-------------
+
+See generated [API documentation](http://dev.yathit.com/sprintly/api-doc/).
+
+
+
+Getting started
+===============
+
 ### Basic usage
 
 All operations are asynchronous, and return [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) or [`Q.Promise`](https://github.com/kriskowal/q/wiki/API-Reference) when progress notification is necessary.  
@@ -51,11 +62,6 @@ Loader will dispatch `sprintly-ready`, `sprintly-login`, `sprintly-login-fail` a
 
     sprintly.login(username, key, true); // save user name and password in `localStorage`.
     
-    
-Documentation
--------------
-
-See generated [API documentation](http://dev.yathit.com/sprintly/api-doc/).
 
 Build
 -----
