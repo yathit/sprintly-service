@@ -27,11 +27,6 @@
      * @type {Array.<Sprintly.Product>}
      */
     this.products = null;
-    /**
-     * Default sprint.ly product.
-     * @type {number}
-     */
-    this.defaultProduct = 0;
   };
 
 
@@ -147,7 +142,6 @@
     this.authHeader = profile.authentication;
     this.username = profile.username;
     this.products = profile.products;
-    this.defaultProduct = profile.defaultProduct;
   };
 
 
@@ -159,9 +153,23 @@
     return {
       authentication: this.authHeader,
       username: this.username,
-      products: this.products,
-      defaultProduct: this.defaultProduct
+      products: this.products
     }
+  };
+
+
+  /**
+   * Get product index by product name.
+   * @param {string} name product name.
+   * @return {number} product index, `-1` if not found.
+   */
+  sprintly.Service.prototype.getProductByName = function(name) {
+    for (var i = 0; i < this.products.length; i++) {
+      if (this.products[i].name == name) {
+        return i;
+      }
+    }
+    return -1;
   };
 
 })(window || self);

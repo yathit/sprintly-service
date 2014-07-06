@@ -23,4 +23,6 @@ Generate documentation.
     
 Upload doc
 
-    gsutil cp -R doc/* gs://dev.yathit.com/sprintly/api-doc/
+    gsutil -m cp -R doc/* gs://dev.yathit.com/sprintly/api-doc/
+    # just update html
+    gsutil -m cp doc/*.html gs://dev.yathit.com/sprintly/api-doc/
