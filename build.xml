@@ -1,0 +1,297 @@
+<project name="sprintly-service" basedir="." default="compile-debug">
+    <dirname property="sprintly-service.dir" file="${ant.file.sprintly-service}"/>
+    <property name="home.dir" location="${user.home}"/>
+    <property name="work.dir" location="${home.dir}/db-work/"
+              description="all repository root are in this working directory" />
+    <property name="lib.dir" location="${home.dir}/lib"
+              description="library files, mostly non-javascript."/>
+
+    <property name="closure-library.dir" value="${work.dir}/closure-library"
+            description="Closure Library repository root directory"/>
+    <property name="closure-compiler.dir" value="${lib.dir}/closure-compiler"
+            description="Closure compiler repository root directory"/>
+    <property name="closure-compiler.jar" value="${closure-compiler.dir}/build/compiler.jar"/>
+    <property name="closure-templates.dir" value="${lib.dir}/closure-templates"
+              description="Closure Template repository root directory"/>
+    <property name="closure-stylesheets.dir" value="${lib.dir}/closure-stylesheets"
+              description="Closure Stylesheet repository root directory"/>
+    <property name="js-test-driver.jar" value="${lib.dir}/js-test-driver/JsTestDriver.jar"
+            description="binary for https://code.google.com/p/js-test-driver/"/>
+    <condition property="jsdoc.dir" value="${lib.dir}/jsdoc-toolkit"><os family="windows"/></condition>
+    <condition property="jsdoc.dir" value="${user.home}/opt/jsdoc-toolkit"><os family="unix"/></condition>
+    <condition property="gsutil" value="D:/opt/gsutil/gsutil"><os family="windows"/></condition>
+    <condition property="gsutil" value="/Users/kyawtun/opt/gsutil/gsutil"><os family="unix"/></condition>
+
+    <property name="outputwrapper.norun" value="(function(){%output%})();"
+            description="Closure compiler output wrapper"/>
+    <property name="outputwrapper.ydn" value="(function (name, definition, context) {if (typeof context['module'] !== 'undefined' &amp;&amp; context['module']['exports']) {context['module']['exports'] = definition.apply(context);}else if (typeof context['define'] !== 'undefined' &amp;&amp; context['define'] === 'function' &amp;&amp; context['define']['amd']) {define(name, [], definition);}else {context[name] = definition();}})('ydn', function () {%output% return ydn;}, (this || {}));"
+              description="wrapper for universal module export for ydn variable"/>
+    <property name="outputwrapper.ydn-pre" value="(function (name, definition, context) {if (typeof context['module'] !== 'undefined' &amp;&amp; context['module']['exports']) {context['module']['exports'] = definition.apply(context);}else if (typeof context['define'] !== 'undefined' &amp;&amp; context['define'] === 'function' &amp;&amp; context['define']['amd']) {define(name, [], definition);}else {context[name] = definition();}})('ydn', function () {%output% "
+              description="wrapper for universal module export for ydn variable without closing"/>
+    <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+             classpath="${closure-compiler.jar}"/>
+
+    <macrodef name="closure-jscomp" description="compile js files using closure compiler ant task">
+        <attribute name="compilationlevel" default="advanced"/>
+        <attribute name="generate-exports" default="false"/>
+        <attribute name="debug" default="false"/>
+        <attribute name="input.dir"/>
+        <attribute name="input.fn"/>
+        <element name="input" optional="true"/>
+        <element name="path-dir" optional="true"/>
+        <attribute name="output.fn"/>
+        <sequential>
+            <jscomp compilationlevel="@{compilationlevel}" warning="VERBOSE"
+                    debug="@{debug}"
+                    output="@{output.fn}"
+                    generateexports="true"
+                    managedependencies="true">
+                <externs dir="${closure-compiler.dir}/externs">
+                    <file name="browser.js"/>
+                </externs>
+                <path>
+                    <fileset dir="${closure-library.dir}/closure/goog">
+                        <include name="*.js"/>
+                        <depth max="7" min="1"/>
+                    </fileset>
+                </path>
+                <sources dir="@{input.dir}">
+                    <file name="@{input.fn}"/>
+                </sources>
+                <path-dir/>
+                <warning level="ERROR" group="accessControls"/>
+
+            </jscomp>
+            <echo>"@{output.fn}" generated.</echo>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="closure-compile"  description="compile js files using
+     closure compiler with strict compilation setting">
+        <element name="cssmap" optional="yes"/>
+        <element name="options" optional="yes"/>
+        <element name="extrapaths" optional="yes"/>
+        <attribute name="input.dir"/>
+        <attribute name="flagfile" default="${sprintly-service.dir}/flagfile.txt"/>
+        <attribute name="base.dir" default="@{input.dir}" />
+        <attribute name="compilerjarfile" default="${closure-compiler.jar}"/>
+        <attribute name="compilationlevel" default="ADVANCED_OPTIMIZATIONS"/>
+        <attribute name="outputmode" default="compiled"/>
+        <attribute name="input"/>
+        <attribute name="output.fn"/>
+        <sequential>
+            <exec executable="python" failonerror="true" logError="true" dir="@{base.dir}">
+                <arg value="${closure-library.dir}/closure/bin/calcdeps.py"/>
+                <cssmap/>
+                <arg line='-i "@{input}"'/>
+                <arg line='--output_file "@{output.fn}"'/>
+                <arg line='-p "${closure-library.dir}"'/>
+                <arg line='-p "@{input.dir}"'/>
+                <arg line="-o @{outputmode}"/>
+                <arg line='-c "@{compilerjarfile}"'/>
+                <arg line='-f "--flagfile=@{flagfile}"'/>
+                <arg line='-f "--compilation_level=@{compilationlevel}"'/>
+                <arg line='-f "--js=${closure-library.dir}/closure/goog/deps.js"'/>
+                <arg line='-f "--externs=${sprintly-service.dir}/externs/browser.js"'/>
+
+                <extrapaths/>
+                <options/>
+            </exec>
+            <echo>"@{output.fn}" generated.</echo>
+        </sequential>
+    </macrodef>
+    <macrodef name="calc-deps" description="calculate closure dependency for running raw js">
+        <attribute name="output.fn"/>
+        <attribute name="input.dir" />
+        <attribute name="output-mode" default="deps"/>
+        <element name="calc-options" optional="yes"/>
+        <sequential>
+            <exec executable="python" failonerror="true" logError="true">
+                <arg value="${closure-library.dir}/closure/bin/calcdeps.py"/>
+                <arg line='--dep "${closure-library.dir}"'/>
+                <arg line='--path "@{input.dir}"'/>
+                <arg line='--output_mode "@{output-mode}"'/>
+                <arg line='--output_file "@{output.fn}"'/>
+                <calc-options/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="compile-raw"  description="compile js files using
+     closure compiler with strict compilation setting">
+        <attribute name="input"/>
+        <attribute name="output.fn"/>
+        <attribute name="input.dir"/>
+        <attribute name="flagfile" default="${sprintly-service.dir}/flagfile.txt"/>
+        <attribute name="compilerjarfile" default="${closure-compiler.jar}"/>
+        <element name="options" optional="yes"/>
+        <sequential>
+            <exec executable="python" failonerror="true" logError="true" dir="${basedir}">
+                <arg value="${closure-library.dir}/closure/bin/calcdeps.py"/>
+
+                <arg line='-i "@{input}"'/>
+                <arg line='--output_file "@{output.fn}"'/>
+                <arg line='-p "${closure-library.dir}"'/>
+
+                <arg line="-o script"/>
+                <arg line='-c "@{compilerjarfile}"'/>
+                <arg line='-f "--flagfile=@{flagfile}"'/>
+                <arg line='-f "--js=${closure-library.dir}/closure/goog/deps.js"'/>
+                <arg line='-f "--externs=${sprintly-service.dir}/externs/browser.js"'/>
+                <options/>
+            </exec>
+            <tempfile property="temp.file"/>
+            <concat destfile="${temp.file}" overwrite="true">
+                <header>
+                    var CLOSURE_DEFINES = {'goog.ENABLE_DEBUG_LOADER': false};
+                </header>
+                <filelist>
+                    <file name="@{output.fn}"/>
+                </filelist>
+            </concat>
+            <move file="${temp.file}" tofile="@{output.fn}"/>
+            <concat destfile="@{output.fn}" append="true">
+                ydn.json.POLY_FILL = true;
+            </concat>
+            <echo>@{output.fn} generated.</echo>
+        </sequential>
+    </macrodef>
+    <macrodef name="jstd-gen" description="generate JSTD file">
+        <attribute name="base.dir"/>
+        <attribute name="js.dir" default="@{base.dir}/src"/>
+        <attribute name="input.fn" default="@{base.dir}/src/test.js"/>
+        <attribute name="test.dir" default="@{base.dir}/test"/>
+        <attribute name="output.fn" default="@{base.dir}/jsTestDriver.conf"/>
+        <element name="deps-options" optional="yes"/>
+        <element name="jsload-fns" optional="yes"/>
+        <sequential>
+            <property name="deps-list.fn" value="@{base.dir}/deps-list.txt"/>
+            <calc-deps
+                    output-mode="list"
+                    input.dir="@{base.dir}/src/"
+                    output.fn="${deps-list.fn}">
+                <calc-options>
+                    <arg line='--path "${closure-library.dir}"'/>
+                    <arg line='--path "@{js.dir}"'/>
+                    <arg line='--path "@{test.dir}"'/>
+                    <arg line='--input "@{input.fn}"'/>
+                    <deps-options/>
+                </calc-options>
+            </calc-deps>
+            <fileset dir="@{test.dir}" id="jstest.files">
+                <include name="**/*Jstest.js"/>
+            </fileset>
+            <pathconvert pathsep="," property="jstestfiles" refid="jstest.files" dirsep="/">
+                <map from="@{base.dir}/test/" to=""/>
+            </pathconvert>
+            <exec executable="python" failonerror="true" logError="true">
+                <arg value="${sprintly-service.dir}/tools/jstd.py"/>
+                <arg line='"${deps-list.fn}"'/>
+                <arg line='"@{output.fn}"'/>
+                <arg line='"${work.dir}"'/>
+                <arg line='"${jstestfiles}"'/>
+                <jsload-fns/>
+            </exec>
+            <echo>JSTD save to: "@{output.fn}"</echo>
+        </sequential>
+    </macrodef>
+    <macrodef name="gen-js-test" description="Generate alltests.js">
+        <attribute name="base.dir" default="${basedir}"/>
+        <attribute name="input.dir" default="@{base.dir}"/>
+        <attribute name="output.fn" default="@{input.dir}/alltests.js"/>
+        <attribute name="ext" default=""/>
+        <sequential>
+            <exec executable="python" failonerror="true" dir="@{base.dir}">
+                <arg value="${sprintly-service.dir}/tools/alltests.py"/>
+                <arg value="@{output.fn}"/>
+                <arg value="@{input.dir}"/>
+                <arg value="@{ext}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+    <macrodef name="compile-gss" description="compile closure stylesheets">
+        <attribute name="rename.style" default="DEBUG"/>
+        <attribute name="input.dir"/>
+        <element name="opt-include" optional="yes" />
+        <attribute name="output.fn"/>
+        <attribute name="pretty" default=""/>
+        <attribute name="rename-format" default="CLOSURE_COMPILED"/>
+        <sequential>
+            <local name="gss-input"/>
+            <fileset dir="@{input.dir}" id="gss-files">
+                <include name="*.css"/>
+            </fileset>
+            <pathconvert property="gss-input" refid="gss-files" pathsep=" "/>
+            <echo>"compiling gss files: ${gss-input}"</echo>
+            <java description="compile closure stylesheets" fork="true"
+                  jar="${closure-stylesheets.dir}/build/closure-stylesheets.jar"
+                  failonerror="true">
+                <!-- <arg value="-pretty-print"/> -->
+                <arg line="@{pretty}"/>
+                <arg line="--rename @{rename.style}" description="options are DEBUG or CLOSURE"/>
+                <arg line='--output-file "@{output.fn}"'/>
+
+                <arg line="${gss-input}"/>
+            </java>
+            <echo>"save css file: @{output.fn}"</echo>
+        </sequential>
+    </macrodef>
+    <macrodef name="comp-gss" description="compile closure stylesheets">
+        <attribute name="platform"/>
+        <attribute name="rename.style" default="DEBUG"/>
+        <attribute name="module.dir"/>
+        <element name="opt-include" optional="yes" />
+        <attribute name="output.fn" default="@{module.dir}/css/@{platform}.css"/>
+        <attribute name="css-rename-map.fn" default="@{output.fn}.js"/>
+        <attribute name="pretty" default=""/>
+        <attribute name="rename-format" default="CLOSURE_COMPILED"/>
+        <sequential>
+            <local name="gss-input"/>
+            <fileset dir="@{module.dir}/gss" id="gss-files">
+                <opt-include/>
+                <include name="modules/**/*.gss"/>
+                <include name="@{platform}/*.css"/>
+                <include name="@{platform}/*.gss"/>
+            </fileset>
+            <pathconvert property="gss-input" refid="gss-files" pathsep=" "/>
+            <echo>"compiling gss files: ${gss-input}"</echo>
+            <java description="compile closure stylesheets" fork="true"
+                  jar="${closure-stylesheets.dir}/build/closure-stylesheets.jar"
+                  failonerror="true">
+                <!-- <arg value="-pretty-print"/> -->
+                <arg line="@{pretty}"/>
+                <arg line="--rename @{rename.style}" description="options are DEBUG or CLOSURE"/>
+                <arg line="--output-renaming-map @{css-rename-map.fn}"/>
+                <arg line="--output-renaming-map-format @{rename-format}"/>
+                <arg line='--output-file "@{output.fn}"'/>
+                <arg line="--allowed-non-standard-function color-stop"/>
+                <arg line="${gss-input}"/>
+            </java>
+            <echo>"save css file: @{output.fn}"</echo>
+        </sequential>
+    </macrodef>
+    <target name="compile-debug" description="compile JS">
+        <mkdir dir="${sprintly-service.dir}/jsc"/>
+        <closure-compile compilationlevel="ADVANCED_OPTIMIZATIONS"
+                         input="${sprintly-service.dir}/src/main.js"
+                         input.dir="${sprintly-service.dir}/src"
+                         output.fn="${sprintly-service.dir}/jsc/sprintly-service.js">
+            <options>
+             <arg line='-f "--externs=${sprintly-service.dir}/externs/opensocial.js"'/>
+             <arg line='-f "--externs=${sprintly-service.dir}/externs/shindig.js"'/>
+            </options>
+        </closure-compile>
+    </target>
+    <target name="deps" description="list dependency files">
+        <delete file="${sprintly-service.dir}/src/deps.js"/>
+        <calc-deps
+                input.dir="${sprintly-service.dir}/src"
+                output.fn="${sprintly-service.dir}/src/deps.js">
+        </calc-deps>
+    </target>
+    <target name="jstd" description="print out jstd file for JS test driver">
+        <jstd-gen base.dir="${sprintly-service.dir}">
+        </jstd-gen>
+    </target>
+
+</project>
