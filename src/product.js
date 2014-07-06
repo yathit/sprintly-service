@@ -64,19 +64,40 @@ sprintly.Product = function(service, product) {
 
 
 /**
- * Send an HTTP request to sprint.ly backend targetting to this product.
- * @param {{
- *   path: string,
- *   method: ?string,
- *   params: ?Object,
- *   body: string|Object
- * }} options
+ * Send an HTTP request to sprint.ly backend targeting to this product.
+ * @param {string} path
+ * @param {string=} method
+ * @param {Object=} params
  * @returns {Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
  * `headers`, `body`, `status`.
  */
-sprintly.Product.prototype.request = function(req) {
-  req.path = 'products/' + this.product.id + '/' + req.path;  // clone req ?
+sprintly.Product.prototype.request = function(path, method, params) {
+  var req = {
+    path: 'products/' + this.product.id + '/' + path,
+    method: method,
+    params: params
+  };
   return this.service.request(req);
+};
+
+
+/**
+ * Send an GET HTTP request to sprint.ly backend targeting to this product.
+ * @param {string} path
+ * @param {Object=} params
+ * @returns {Promise} resolve on success with `body` JSON and reject with `Error` if not 200 respond code.
+ */
+sprintly.Product.prototype.get = function(path, params) {
+  return this.request(path, 'GET', params).then(function(resp) {
+    if (resp.status == 200) {
+      return resp.body;
+    } else {
+      var e = new Error(resp.statusText);
+      e.code = resp.status;
+      e.message = resp.raw;
+      throw e;
+    }
+  });
 };
 
 

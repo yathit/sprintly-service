@@ -9,9 +9,10 @@ goog.provide('sprintly.Service');
 
 /**
  * Create sprint.ly service.
+ * @param {string=} baseUrl Base URL to make backend request.
  * @constructor
  */
-sprintly.Service = function() {
+sprintly.Service = function(baseUrl) {
   /**
    * @type {?string}
    * @protected
@@ -27,13 +28,15 @@ sprintly.Service = function() {
    * @type {Array.<Sprintly.Product>}
    */
   this.products = null;
+
+  this.baseUrl = baseUrl || sprintly.Service.BASE_URL;
 };
 
 
 /**
  * @define {string} sprint.ly backend base URL.
  */
-sprintly.Service.prototype.baseUrl = 'https://sprint.ly/api/';
+sprintly.Service.BASE_URL = 'https://sprint.ly/api/';
 
 
 /**
@@ -155,21 +158,6 @@ sprintly.Service.prototype.getProfile = function() {
     username: this.username,
     products: this.products
   }
-};
-
-
-/**
- * Get product index by product name.
- * @param {string} name product name.
- * @return {number} product index, `-1` if not found.
- */
-sprintly.Service.prototype.getProductByName = function(name) {
-  for (var i = 0; i < this.products.length; i++) {
-    if (this.products[i].name == name) {
-      return i;
-    }
-  }
-  return -1;
 };
 
 

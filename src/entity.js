@@ -100,10 +100,33 @@ sprintly.Entity.prototype.invalidate = function() {
 
 
 /**
- * Get Item.
+ * Get Item. Local data, if available, is notified in progress and server validated data in resolve callback.
  * @param {number} id
+ * @returns {Q.Promise} return a `Promise` object with progress notification.
  */
 sprintly.Entity.prototype.get = function(id) {
+  var deferred = Q.defer();
+  var db_get = this.product.db.get(this.name, id);
+  db_get.then(function(x) {
+    if (x) {
+      deferred.notify(x);
+    }
+  });
+  // todo: currently sprintly backend does not support conditional request.
+  var df = this.product.get(this.name + '/' + id + '.json').then(function(x) {
+    deferred.resolve(x);
+  }, function(e) {
+    deferred.reject(e);
+  });
+  return deferred.promise;
+};
+
+
+/**
+ * Add item.
+ * @param item
+ */
+sprintly.Entity.prototype.add = function(item) {
 
 };
 
@@ -116,21 +139,9 @@ sprintly.Entity.prototype.get = function(id) {
  */
 sprintly.Entity.prototype.list_ = function(offset) {
   offset = offset || 0;
-  var options = {
-    path: this.name + '.json',
-    params: {
-      limit: 100,
-      offset: offset
-    }
+  var params = {
+    limit: 100,
+    offset: offset
   };
-  return this.product.request(options).then(function(resp) {
-    if (resp.status == 200) {
-      return resp.body;
-    } else {
-      var e = new Error(resp.statusText);
-      e.code = resp.status;
-      e.message = resp.raw;
-      throw e;
-    }
-  })
+  return this.product.get(this.name + '.json', params);
 };
