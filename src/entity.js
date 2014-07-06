@@ -214,7 +214,7 @@ sprintly.Entity.prototype.get = function(id) {
 /**
  * Send POST request to server.
  * @param {Object} record
- * @return {Promise}
+ * @return {Q.Promise}
  * @private
  */
 sprintly.Entity.prototype.post_ = function(record) {
@@ -229,7 +229,7 @@ sprintly.Entity.prototype.post_ = function(record) {
 /**
  * Add item.
  * @param {Object} record record value.
- * @return {Promise}
+ * @return {Q.Promise}
  */
 sprintly.Entity.prototype.add = function(record) {
   var me = this;
@@ -260,7 +260,7 @@ sprintly.Entity.prototype.add = function(record) {
 /**
  * Update item.
  * @param {Object} record record value.
- * @return {Promise}
+ * @return {Q.Promise}
  */
 sprintly.Entity.prototype.put = function(record) {
   var me = this;
@@ -286,15 +286,15 @@ sprintly.Entity.prototype.put = function(record) {
 
 /**
  * List Items.
- * @param {number=} offset offset.
- * @returns {Promise}
+ * @param {number=} opt_offset offset.
+ * @return {Q.Promise}
  * @private
  */
-sprintly.Entity.prototype.list_ = function(offset) {
-  offset = offset || 0;
+sprintly.Entity.prototype.list_ = function(opt_offset) {
+  opt_offset = opt_offset || 0;
   var params = {
     limit: 100,
-    offset: offset
+    offset: opt_offset
   };
   return this.product.get(this.name + '.json', params);
 };

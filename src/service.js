@@ -47,62 +47,64 @@ sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
  *   params: ?Object,
  *   body: string|Object
  * }} options
- * @returns {Q.Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
+ * @return {Q.Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
  * `headers`, `body`, `status`.
  */
 sprintly.Service.prototype.request = function(options) {
+  if (!this.authHeader) {
+    var e = new Error('Not login');
+    e.name = 'LoginError';
+    return Q.reject(e);
+  }
+
   var me = this;
-  return new Q.Promise(function(resolve, reject) {
-    if (!me.authHeader) {
-      var e = new Error('Not login');
-      e.name = 'LoginError';
-      reject(e);
-    }
+  var deferred = Q.defer();
 
-    var xhr = new XMLHttpRequest();
-    var method = options.method || 'GET';
-    var query = [];
-    var params = options.params || {};
-    var url = me.baseUrl + options.path;
-    for (var q in params) {
-      query.push(q + '=' + encodeURIComponent(params[q]));
-    }
-    url += '?' + query.join('&');
-    xhr.open(method, url, true);
-    xhr.setRequestHeader('Authorization', me.authHeader);
-    xhr.onload = function(e) {
-      var raw = {
-        status: xhr.status,
-        statusText: xhr.statusText,
-        body: null,
-        raw: xhr.responseText,
-        headers: {}
-      };
-      try {
-        raw.body = JSON.parse(xhr.responseText);
-      } catch (e) {
-        raw.body = null;
-      }
-      var header_lines = xhr.getAllResponseHeaders().split('\n');
-      for (var i = 0; i < header_lines.length; i++) {
-        var idx = header_lines[i].indexOf(':');
-        if (idx > 0) {
-          var name = header_lines[i].substr(0, idx).toLowerCase();
-          var value = header_lines[i].substr(idx + 1).trim();
-          raw.headers[name] = value;
-        }
-      }
-      resolve(raw);
+  var xhr = new XMLHttpRequest();
+  var method = options.method || 'GET';
+  var query = [];
+  var params = options.params || {};
+  var url = me.baseUrl + options.path;
+  for (var q in params) {
+    query.push(q + '=' + encodeURIComponent(params[q]));
+  }
+  url += '?' + query.join('&');
+  xhr.open(method, url, true);
+  xhr.setRequestHeader('Authorization', me.authHeader);
+  xhr.onload = function(e) {
+    var raw = {
+      status: xhr.status,
+      statusText: xhr.statusText,
+      body: null,
+      raw: xhr.responseText,
+      headers: {}
     };
-    xhr.send(options.body);
-  });
+    try {
+      raw.body = JSON.parse(xhr.responseText);
+    } catch (e) {
+      raw.body = null;
+    }
+    var header_lines = xhr.getAllResponseHeaders().split('\n');
+    for (var i = 0; i < header_lines.length; i++) {
+      var idx = header_lines[i].indexOf(':');
+      if (idx > 0) {
+        var name = header_lines[i].substr(0, idx).toLowerCase();
+        var value = header_lines[i].substr(idx + 1).trim();
+        raw.headers[name] = value;
+      }
+    }
+    xhr = null;
+    deferred.resolve(raw);
+  };
+  xhr.send(options.body);
 
+  return deferred.promise;
 };
 
 
 /**
  * Get list of products.
- * @returns {Promise} resolve with `Array.<Sprintly.Product>`.
+ * @return {Q.Promise} resolve with `Array.<Sprintly.Product>`.
  */
 sprintly.Service.prototype.listProducts = function() {
   return this.request({
@@ -118,7 +120,7 @@ sprintly.Service.prototype.listProducts = function() {
  * Technically login is not required. Here we are getting ready with default product list.
  * @param {string} user sprint.ly user id.
  * @param {string} password sprint.ly password or API key.
- * @returns {Promise} resolve with list of product on login, reject with `Error`.
+ * @return {Q.Promise} resolve with list of product on login, reject with `Error`.
  */
 sprintly.Service.prototype.login = function(user, password) {
   var me = this;
@@ -157,7 +159,7 @@ sprintly.Service.prototype.getProfile = function() {
     authentication: this.authHeader,
     username: this.username,
     products: this.products
-  }
+  };
 };
 
 
