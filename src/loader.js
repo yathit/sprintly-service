@@ -67,7 +67,7 @@ sprintly.login = function(username, password, remember) {
       sprintly.products[id].dispose();
       delete sprintly.products[id];
     }
-    window.dispatchEvent(new CustomEvent('sprintly-logout'));
+    window.dispatchEvent(new CustomEvent('sprintly-login-fail'));
   })
 };
 
