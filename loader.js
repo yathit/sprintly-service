@@ -51,13 +51,9 @@
     if (remember === false) {
       localStorage.removeItem('user-profile');
     }
-    return this.service.login(username, password).then(function(products) {
+    return sprintly.service.login(username, password).then(function(products) {
       if (remember) {
-        var profile = {
-          authentication: sprintly.service.getAuthentication(),
-          username: username,
-          products: products
-        };
+        var profile = sprintly.service.getProfile();
         localStorage.setItem('user-profile', JSON.stringify(profile));
         sprintly.dispatchReady(profile);
         window.dispatchEvent(new CustomEvent('sprintly-login'));
@@ -92,6 +88,7 @@
   /**
    * Run sprintly loader.
    * This will dispatch `ready` event if user already login on previous session.
+   * @returns {Promise} If user has valid session, resolve user profile, otherwise reject with `false`.
    */
   sprintly.run = function() {
     var profile = localStorage.getItem('user-profile');

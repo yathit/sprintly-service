@@ -22,6 +22,12 @@
      * @protected
      */
     this.authHeader = null;
+    /**
+     * List of products.
+     * @type {Array.<Sprintly.Product>}
+     * @protected
+     */
+    this.products = null;
   };
 
 
@@ -93,26 +99,8 @@
 
 
   /**
-   * Set authentication header.
-   * @param {?string} auth authentication header.
-   */
-  sprintly.Service.prototype.setAuthentication = function(auth) {
-    this.authHeader = auth;
-  };
-
-
-  /**
-   * Set authentication header.
-   * @return {?string} authentication header.
-   */
-  sprintly.Service.prototype.getAuthentication = function() {
-    return this.authHeader;
-  };
-
-
-  /**
    * Get list of products.
-   * @returns {Promise}
+   * @returns {Promise} resolve with `Array.<Sprintly.Product>`.
    */
   sprintly.Service.prototype.listProducts = function() {
     return this.request({
@@ -134,8 +122,9 @@
     var me = this;
     this.authHeader = 'Basic ' + btoa(user + ':' + password);
     var respond = this.listProducts();
-    respond.then(function(resp) {
-      // console.log(resp.body);
+    respond.then(function(products) {
+      me.products = products;
+      me.username = user;
     }, function() {
       me.authHeader = null;
     });
@@ -150,6 +139,20 @@
   sprintly.Service.prototype.setProfile = function(profile) {
     this.authHeader = profile.authentication;
     this.username = profile.username;
+    this.products = profile.products;
+  };
+
+
+  /**
+   * Get user profile.
+   * @return {Object} user profile.
+   */
+  sprintly.Service.prototype.getProfile = function() {
+    return {
+      authentication: this.authHeader,
+      username: this.username,
+      products: this.products
+    }
   };
 
 })(window || self);

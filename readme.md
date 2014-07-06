@@ -1,7 +1,11 @@
 Sprint.ly backend module
 ========================
 
-This javascript module is a thin wrapper on [Sprint.ly API](https://sprintly.uservoice.com/knowledgebase/topics/15784-api) providing easy access to the service.
+This javascript module is a thin wrapper on [Sprint.ly API](https://sprintly.uservoice.com/knowledgebase/topics/15784-api) providing easy access to the service and offline support.
+
+### Browser support
+
+Target browsers are Chrome 35+, Firefox 30+, Safari 8+ and IE 18+. 
 
 Documentation
 -------------
