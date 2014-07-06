@@ -13,7 +13,7 @@ Documentation
 
 See generated [API documentation](http://dev.yathit.com/sprintly/api-doc/).
 
-
+Use [playground web page](http://yathit.github.io/sprintly-service/playground.html) to try out the following Getting Started tutorial.
 
 Getting started
 ===============
