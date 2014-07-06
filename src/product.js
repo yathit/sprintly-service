@@ -59,24 +59,24 @@ sprintly.Product = function(service, product) {
    * @type {sprintly.Entity}
    * @final
    */
-  this.Item = new sprintly.Entity(this, 'item');
+  this.Item = new sprintly.Entity(this, 'items');
 };
 
 
 /**
- * Sprint.ly Entity.
- * @param {sprintly.Product} product
- * @param {string} name entity name.
- * @constructor
+ * Send an HTTP request to sprint.ly backend targetting to this product.
+ * @param {{
+ *   path: string,
+ *   method: ?string,
+ *   params: ?Object,
+ *   body: string|Object
+ * }} options
+ * @returns {Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
+ * `headers`, `body`, `status`.
  */
-var Entity = function(product, name) {
-  /**
-   * @type {sprintly.Product}
-   * @protected
-   * @final
-   */
-  this.product = product;
-
+sprintly.Product.prototype.request = function(req) {
+  req.path = 'products/' + this.product.id + '/' + req.path;  // clone req ?
+  return this.service.request(req);
 };
 
 
@@ -95,13 +95,15 @@ sprintly.Product.prototype.dispose = function() {
  */
 sprintly.Product.schema = {
   stores: [{
-    name: 'item',
+    name: 'items',
     keyPath: 'number',
     indexes: [{
       name: 'tags',
       multiEntry: true
     }, {
       name: 'status'
+    }, {
+      name: 'last_modified'
     }, {
       name: 'type'
     }]

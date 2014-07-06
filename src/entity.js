@@ -50,6 +50,87 @@ sprintly.Entity = function(product, name) {
 };
 
 
+/**
+ * @typedef {{
+ *  limit: number,
+   *  offset: number,
+   *  tags: ?Array.<string>
+ * }}
+ */
+sprintly.Entity.Options;
+
+
+/**
+ * Recursively fetch entries from server to local.
+ * @param {number} offset query offset.
+ * @returns {Promise} resolved with number of entries fetched.
+ * @private
+ */
+sprintly.Entity.prototype.fetch_ = function(offset) {
+  var me = this;
+  return this.list_(offset).then(function(entries) {
+    var n = entries.length;
+    if (n > 0) {
+      me.product.db.put(me.name, entries);
+      return me.fetch_(offset + entries.length).then(function(cnt) {
+        return cnt + n;
+      })
+    }
+    return n;
+  });
+};
+
+
+/**
+ * Update local cache.
+ */
+sprintly.Entity.prototype.update = function() {
+  return this.product.db.count(this.name).done(function(cnt) {
+    return this.fetch_(cnt);
+  }, this);
+};
+
+
+/**
+ * Invalidate local cache.
+ */
+sprintly.Entity.prototype.invalidate = function() {
+  throw new Error('NotImplemented');
+};
+
+
+/**
+ * Get Item.
+ * @param {number} id
+ */
 sprintly.Entity.prototype.get = function(id) {
 
+};
+
+
+/**
+ * List Items.
+ * @param {number=} offset offset.
+ * @returns {Promise}
+ * @private
+ */
+sprintly.Entity.prototype.list_ = function(offset) {
+  offset = offset || 0;
+  var options = {
+    path: this.name + '.json',
+    params: {
+      limit: 100,
+      offset: offset
+    }
+  };
+  return this.product.request(options).then(function(resp) {
+    if (resp.status == 200) {
+      return resp.body;
+    } else {
+      var e = new Error(resp.statusText);
+      e.code = resp.status;
+      e.message = resp.raw;
+      throw e;
+    }
+  })
 };
