@@ -20,7 +20,7 @@ Getting started
 
 ### Basic usage
 
-All operations are asynchronous, and return [`Promise`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise) or [`Q.Promise`](https://github.com/kriskowal/q/wiki/API-Reference) when progress notification is necessary.  
+All operations are asynchronous, and return [`Q.Promise`](https://github.com/kriskowal/q/wiki/API-Reference).  
 
     var service = new sprintly.Service();
     service.login(username, key); // this will return list of products after successful login
@@ -80,4 +80,5 @@ Upload doc
     gsutil -m cp -R doc/* gs://dev.yathit.com/sprintly/api-doc/
     # just update html
     gsutil -m cp doc/*.html gs://dev.yathit.com/sprintly/api-doc/
+    
     

@@ -1,7 +1,7 @@
 <project name="sprintly-service" basedir="." default="compile-debug">
     <dirname property="sprintly-service.dir" file="${ant.file.sprintly-service}"/>
     <property name="home.dir" location="${user.home}"/>
-    <property name="work.dir" location="${home.dir}/db-work/"
+    <property name="work.dir" location="${sprintly-service.dir}/../"
               description="all repository root are in this working directory" />
     <property name="lib.dir" location="${home.dir}/lib"
               description="library files, mostly non-javascript."/>
