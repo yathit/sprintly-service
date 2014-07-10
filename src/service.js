@@ -4,7 +4,8 @@
    * @author kyawtun@yathit.com (Kyaw Tun)
    */
 
-goog.provide('sprintly.Service');
+sprintly = {};
+
 
 
 /**
@@ -45,20 +46,22 @@ sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
  *   path: string,
  *   method: ?string,
  *   params: ?Object,
- *   body: string|Object
+ *   body: string|Object,
+ *   callback: Function
  * }} options
- * @return {Q.Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
- * `headers`, `body`, `status`.
  */
 sprintly.Service.prototype.request = function(options) {
+  if (!options.callback) {
+    options.callback = function() {};
+  }
   if (!this.authHeader) {
     var e = new Error('Not login');
     e.name = 'LoginError';
-    return Q.reject(e);
+    options.callback(false, e);
+    return;
   }
 
   var me = this;
-  var deferred = Q.defer();
 
   var xhr = new XMLHttpRequest();
   var method = options.method || 'GET';
@@ -75,14 +78,14 @@ sprintly.Service.prototype.request = function(options) {
     var raw = {
       status: xhr.status,
       statusText: xhr.statusText,
-      body: null,
       raw: xhr.responseText,
       headers: {}
     };
+    var json;
     try {
-      raw.body = JSON.parse(xhr.responseText);
+      json = JSON.parse(xhr.responseText);
     } catch (e) {
-      raw.body = null;
+      json = null;
     }
     var header_lines = xhr.getAllResponseHeaders().split('\n');
     for (var i = 0; i < header_lines.length; i++) {
@@ -94,23 +97,21 @@ sprintly.Service.prototype.request = function(options) {
       }
     }
     xhr = null;
-    deferred.resolve(raw);
+    options.callback(json, raw);
   };
   xhr.send(options.body);
 
-  return deferred.promise;
 };
 
 
 /**
  * Get list of products.
- * @return {Q.Promise} resolve with `Array.<Sprintly.Product>`.
+ * @param {function(Array.<Sprintly.Product>)} callback callback for list of products.
  */
-sprintly.Service.prototype.listProducts = function() {
+sprintly.Service.prototype.listProducts = function(callback) {
   return this.request({
-    path: 'products.json'
-  }).then(function(resp) {
-    return resp.body;
+    path: 'products.json',
+    callback: callback
   });
 };
 
@@ -120,22 +121,24 @@ sprintly.Service.prototype.listProducts = function() {
  * Technically login is not required. Here we are getting ready with default product list.
  * @param {string} user sprint.ly user id.
  * @param {string} password sprint.ly password or API key.
- * @return {Q.Promise} resolve with list of product on login, reject with `Error`.
+ * @return {Promise} resolve with list of product on login, reject with `Error`.
  */
 sprintly.Service.prototype.login = function(user, password) {
   var me = this;
   this.authHeader = 'Basic ' + btoa(user + ':' + password);
-  var respond = this.listProducts();
-  respond.then(function(products) {
-    me.products = products;
-    me.username = user;
-    if (me.defaultProduct >= products.length) {
-      me.defaultProduct = 0;
-    }
-  }, function() {
-    me.authHeader = null;
+  return new Promise(function(resolve, reject) {
+    me.listProducts(function(arr) {
+      if (arr) {
+        me.products = arr;
+        me.username = user;
+        resolve(arr);
+      } else {
+        me.authHeader = null;
+        reject(new Error('LoginFail'));
+      }
+    });
   });
-  return respond;
+
 };
 
 

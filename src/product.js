@@ -34,6 +34,7 @@ goog.require('sprintly.Service');
  * @param {sprintly.Service} service
  * @param {Sprintly.Product} product
  * @constructor
+ * @implements {EntityService}
  * @disposable
  */
 sprintly.Product = function(service, product) {
@@ -65,41 +66,94 @@ sprintly.Product = function(service, product) {
 
 /**
  * Send an HTTP request to sprint.ly backend targeting to this product.
+ * @param {Function} callback
  * @param {string} path
  * @param {string=} method
  * @param {Object=} params
  * @param {(Object|string)=} body
- * @return {Q.Promise} resolve on success with `Respond` object and reject with `Error`. `Respond` object has
- * `headers`, `body`, `status`.
  */
-sprintly.Product.prototype.request = function(path, method, params, body) {
+sprintly.Product.prototype.request = function(callback, path, method, params, body) {
   var req = {
     path: 'products/' + this.product.id + '/' + path,
     method: method,
     params: params,
-    body: body
+    body: body,
+    callback: callback
   };
-  return this.service.request(req);
+  this.service.request(req);
 };
 
 
 /**
- * Send an GET HTTP request to sprint.ly backend targeting to this product.
- * @param {string} path
- * @param {Object=} opt_params
- * @return {Q.Promise} resolve on success with `body` JSON and reject with `Error` if not 200 respond code.
+ * Send HTTP GET request.
+ * @param {function(number, !Object, ?string)} callback status code and result
+ * @param {string} name entity name
+ * @param {IDBKey} id entity id
+ * @param {?string} token validator token
  */
-sprintly.Product.prototype.get = function(path, opt_params) {
-  return this.request(path, 'GET', opt_params).then(function(resp) {
-    if (resp.status == 200) {
-      return resp.body;
+sprintly.Product.prototype.get = function(callback, name, id, token) {
+  this.request(function(json, raw) {
+    if (raw.status == 200) {
+      callback(raw.status, json, null);
     } else {
-      var e = new Error(resp.statusText);
-      e.code = resp.status;
-      e.message = resp.raw;
-      throw e;
+      callback(raw.status, new Error(raw.statusText), null);
     }
-  });
+  }, name + '/' + id + '.json');
+};
+
+
+/**
+ * Write collection.
+ * @param {function(number, !Object, IDBKey, ?string)} callback status code, validator and result
+ * @param {IDBKey} name entity name
+ * @param {Object} obj
+ */
+sprintly.Product.prototype.add = function(callback, name, obj) {
+  this.request(function(json, raw) {
+    if (raw.status == 200 || raw.status == 201) {
+      callback(raw.status, json, json.id, null);
+    } else {
+      callback(raw.status, new Error(raw.statusText));
+    }
+  }, name + '.json', 'POST', obj);
+};
+
+
+/**
+ * Write collection.
+ * @param {function(number, !Object, IDBKey, ?string)} callback status code and result
+ * @param {string} name entity name
+ * @param {Object} obj entity value
+ * @param {IDBKey} id entity id
+ * @param {string} token validator token
+ */
+sprintly.Product.prototype.put = function(callback, name, obj, id, token) {
+  this.request(function(json, raw) {
+    if (raw.status == 200 || raw.status == 201) {
+      callback(raw.status, json, json.id, null);
+    } else {
+      callback(raw.status, new Error(raw.statusText));
+    }
+  }, name + '/' + id + '.json', 'POST', obj);
+};
+
+
+
+/**
+ * Write collection.
+ * @param {function(number)} callback status code and result
+ * @param {string} name entity name
+ * @param {IDBKey} id entity id
+ * @param {string} token validator token
+ */
+sprintly.Product.prototype.remove = function(callback, name, id, token) {
+  this.request(function(json, raw) {
+    if (raw.status == 200 || raw.status == 404) {
+      callback(raw.status, json, json.id, null);
+    } else {
+      callback(raw.status, new Error(raw.statusText));
+    }
+  }, name + '/' + id + '.json', 'DELETE');
 };
 
 
@@ -120,15 +174,7 @@ sprintly.Product.prototype.dispose = function() {
  * @type {Object}
  */
 sprintly.Product.schema = {
-  stores: [{
-    name: '_history',
-    keyPath: 'sequence',
-    autoIncrement: true,
-    indexes: [{
-      name: 'key',
-      keyPath: ['entity', 'id']
-    }]
-  }, {
+  stores: [ydn.db.sync.Entity.schema, {
     name: 'items',
     keyPath: 'number',
     autoIncrement: true,

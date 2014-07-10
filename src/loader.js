@@ -66,9 +66,9 @@ sprintly.login = function(username, password, remember) {
       var profile = sprintly.service.getProfile();
       localStorage.setItem('user-profile', JSON.stringify(profile));
       sprintly.dispatchReady(profile);
-      window.dispatchEvent(new CustomEvent('sprintly-login'));
     }
     sprintly.prepareProducts(products);
+    window.dispatchEvent(new CustomEvent('sprintly-login'));
   }, function(e) {
     localStorage.removeItem('user-profile');
     for (var id in sprintly.products) {
