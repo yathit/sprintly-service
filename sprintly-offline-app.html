@@ -3,15 +3,21 @@
 <head lang="en">
   <meta charset="UTF-8">
   <title>Offline app for sprint.ly</title>
+  <link href="app.css" rel="stylesheet" type="text/css" />
   <script src="jsc/ydn.db-core-sync.js"></script>
-  <script src="src/service.js"></script>
-  <script src="src/product.js"></script>
-  <script src="src/loader.js"></script>
+  <script src="src/sprintly/service.js"></script>
+  <script src="src/sprintly/product.js"></script>
+  <script src="src/sprintly/loader.js"></script>
+  <script src="src/base.js"></script>
+  <script src="src/model/setting.js"></script>
+  <script src="src/ui/header.js"></script>
+  <script src="src/ui/setting.js"></script>
 </head>
 <body>
   <header>
-    Offline app for sprint.ly
+    Yathit Offline App for <a href="https://sprint.ly">Sprint.ly</a>
   </header>
+
   <section id="page-login">
     <input placeholder="User name" id="username"/><br/>
     <input placeholder="API Key" id="password"/><br/>
@@ -19,15 +25,24 @@
     <label for="remember">Remember me</label><br/>
     <button id="login">Login</button>
   </section>
-  <div id="app-desktop">
-    <section id="page-item-list">
+  <div id="desktop">
+    <nav>
+      <section id="product-selection"></section>
+    </nav>
+    <article>
+      <section id="page-item-list">
 
-    </section>
-    <section id="page-item">
+      </section>
+      <section id="page-item">
 
-    </section>
+      </section>
+
+    </article>
+
+
   </div>
-  <footer></footer>
+
+  <footer>Terms | Privacy | Contact Us</footer>
   <script src="src/app.js"></script>
 </body>
 </html>

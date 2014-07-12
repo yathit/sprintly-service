@@ -1,0 +1,18 @@
+
+body {
+    font-family: Arial, sans-serif;
+}
+
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    clear: both;
+    margin-left:auto;
+    margin-right:auto;
+    color: #767676;
+    font-size: 13px;
+    padding: 32px 0 20px;
+    text-align: center;
+}

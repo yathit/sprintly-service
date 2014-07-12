@@ -72,6 +72,7 @@ sprintly.Product = function(service, product) {
       this.Item = new ydn.db.sync.Entity(this, 'items', this.db);
 
       resolve(this);
+      setTimeout(this.update.bind(this), 10);
     }, me);
   });
 
@@ -197,6 +198,14 @@ sprintly.Product.prototype.list = function(callback, name, token) {
       callback(raw.status, new Error(raw.statusText));
     }
   }, name + '.json', 'GET', params);
+};
+
+
+/**
+ * Update all entities.
+ */
+sprintly.Product.prototype.update = function() {
+  this.Item.update();
 };
 
 

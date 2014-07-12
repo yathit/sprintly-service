@@ -20,48 +20,7 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
-var app = {};
 
-
-/**
- * Active product for the workspace.
- * @type {sprintly.Product}
- */
-app.activeProduct = null;
-
-
-/**
- * Load user setting.
- * @private
- */
-var loadUserSetting = function() {
-  var profile = sprintly.service.getProfile();
-  var setting = localStorage.getItem('setting-' + profile.username);
-  if (setting) {
-    setting = JSON.parse(setting);
-  } else {
-    setting = saveUserSetting();
-  }
-  app.activeProduct = sprintly.products[setting.activeProductId];
-};
-
-
-/**
- * Save user setting. If setting not exist, a default setting is provisioned.
- * @param {Object=} setting current setting.
- * @return {Object} user setting.
- * @private
- */
-var saveUserSetting = function(setting) {
-  if (!setting) {
-    var profile = sprintly.service.getProfile();
-    var setting = {
-      activeProductId: Object.keys(sprintly.products)[0]
-    };
-  }
-  localStorage.setItem('setting-' + profile.username, JSON.stringify(setting));
-  return setting;
-};
 
 /**
  * Process after login.
@@ -70,11 +29,12 @@ var saveUserSetting = function(setting) {
 var processLogin = function(promise) {
   promise.then(function() {
     document.getElementById('page-login').style.display = 'none';
-    document.getElementById('app-desktop').style.display = '';
-    loadUserSetting();
+    document.getElementById('desktop').style.display = '';
+    var profile = sprintly.service.getProfile();
+    app.model.setting.setUser(profile.username);
   }, function() {
     document.getElementById('page-login').style.display = '';
-    document.getElementById('app-desktop').style.display = 'none';
+    document.getElementById('desktop').style.display = 'none';
   })
 };
 
@@ -90,6 +50,13 @@ document.getElementById('login').onclick = function(e) {
 window.addEventListener('hash-changed', function(e) {
 
 });
+
+// initialize models
+app.model.setting = new app.model.Setting();
+
+// initialize UI
+app.ui.header = new app.ui.Header();
+app.ui.header.render(document.querySelector('nav'));
 
 
 processLogin(sprintly.run());
