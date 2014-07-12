@@ -23,11 +23,6 @@
  */
 
 
-goog.provide('sprintly.Product');
-goog.require('sprintly.Entity');
-goog.require('sprintly.Service');
-
-
 
 /**
  * Represent sprint.ly product.
@@ -60,7 +55,27 @@ sprintly.Product = function(service, product) {
    * @type {sprintly.Entity}
    * @final
    */
-  this.Item = new sprintly.Entity(this, 'items');
+  this.Item = null;
+
+  var me = this;
+
+  /**
+   * Resolve on Product entities are ready.
+   * @type {Promise} resolve with `this` and reject with database Error.
+   */
+  this.onReady = new Promise(function(resolve, reject) {
+    me.db.onReady(function(e) {
+      if (e) {
+        reject(e);
+        return;
+      }
+      this.Item = new ydn.db.sync.Entity(this, 'items', this.db);
+
+      resolve(this);
+    }, me);
+  });
+
+
 };
 
 
@@ -93,7 +108,7 @@ sprintly.Product.prototype.request = function(callback, path, method, params, bo
  */
 sprintly.Product.prototype.get = function(callback, name, id, token) {
   this.request(function(json, raw) {
-    if (raw.status == 200) {
+    if (raw.status == 200 || raw.status == 302 || raw.status == 304) { // OK, Found, Not Modified
       callback(raw.status, json, null);
     } else {
       callback(raw.status, new Error(raw.statusText), null);
@@ -110,12 +125,12 @@ sprintly.Product.prototype.get = function(callback, name, id, token) {
  */
 sprintly.Product.prototype.add = function(callback, name, obj) {
   this.request(function(json, raw) {
-    if (raw.status == 200 || raw.status == 201) {
+    if (raw.status == 200 || raw.status == 201) { // OK, Created
       callback(raw.status, json, json.id, null);
     } else {
       callback(raw.status, new Error(raw.statusText));
     }
-  }, name + '.json', 'POST', obj);
+  }, name + '.json', 'POST', null, obj);
 };
 
 
@@ -129,12 +144,12 @@ sprintly.Product.prototype.add = function(callback, name, obj) {
  */
 sprintly.Product.prototype.put = function(callback, name, obj, id, token) {
   this.request(function(json, raw) {
-    if (raw.status == 200 || raw.status == 201) {
+    if (raw.status == 200 || raw.status == 201) { // OK, Created
       callback(raw.status, json, json.id, null);
     } else {
       callback(raw.status, new Error(raw.statusText));
     }
-  }, name + '/' + id + '.json', 'POST', obj);
+  }, name + '/' + id + '.json', 'POST', null, obj);
 };
 
 
@@ -148,12 +163,40 @@ sprintly.Product.prototype.put = function(callback, name, obj, id, token) {
  */
 sprintly.Product.prototype.remove = function(callback, name, id, token) {
   this.request(function(json, raw) {
-    if (raw.status == 200 || raw.status == 404) {
+    if (raw.status == 200 || raw.status == 404) { // OK, Not Found
       callback(raw.status, json, json.id, null);
     } else {
       callback(raw.status, new Error(raw.statusText));
     }
   }, name + '/' + id + '.json', 'DELETE');
+};
+
+
+/**
+ * List collection.
+ * @param {function(number, Array.<!Object>, ?string)} callback return nullable paging token and
+ * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
+ * @param {string} name entity name
+ * @param {?string} token paging token. If paging token is not provided, paging token should be
+ * read from the database.
+ */
+sprintly.Product.prototype.list = function(callback, name, token) {
+  var params = {status: 'backlog,in-progress,completed,accepted'};
+  if (token) {
+    params['offset'] = token;
+  }
+  this.request(function(json, raw) {
+    if (raw.status == 200) { // OK, Not Found
+      if (json && json.length > 0) {
+        token += json.length;
+      } else {
+        token = null;
+      }
+      callback(raw.status, json, token);
+    } else {
+      callback(raw.status, new Error(raw.statusText));
+    }
+  }, name + '.json', 'GET', params);
 };
 
 

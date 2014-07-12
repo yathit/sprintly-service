@@ -4,18 +4,30 @@
   <meta charset="UTF-8">
   <title>Offline app for sprint.ly</title>
   <script src="jsc/ydn.db-core-sync.js"></script>
+  <script src="src/service.js"></script>
+  <script src="src/product.js"></script>
+  <script src="src/loader.js"></script>
 </head>
 <body>
   <header>
     Offline app for sprint.ly
   </header>
-  <section>
+  <section id="page-login">
     <input placeholder="User name" id="username"/><br/>
     <input placeholder="API Key" id="password"/><br/>
     <input type="checkbox" id="remember"/>
     <label for="remember">Remember me</label><br/>
     <button id="login">Login</button>
   </section>
+  <div id="app-desktop">
+    <section id="page-item-list">
+
+    </section>
+    <section id="page-item">
+
+    </section>
+  </div>
+  <footer></footer>
   <script src="src/app.js"></script>
 </body>
 </html>

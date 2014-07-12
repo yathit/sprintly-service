@@ -8,10 +8,6 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
-goog.provide('sprintly');
-goog.require('sprintly.Product');
-goog.require('sprintly.Service');
-
 
 /**
  * @type {sprintly.Service} main service.
@@ -19,6 +15,22 @@ goog.require('sprintly.Service');
  * @export
  */
 sprintly.service = new sprintly.Service();
+
+
+/**
+ * Events dispatch to window.
+ * @enum {string}
+ */
+sprintly.EventType = {
+  /** Login event */
+  LOGIN: 'sprintly-login',
+  /** Login fail event */
+  LOGIN_FAIL: 'sprintly-login-fail',
+  /** Logout event */
+  LOGOUT: 'sprintly-logout',
+  /** Service ready event */
+  READY: 'sprintly-ready'
+};
 
 
 /**
@@ -30,6 +42,7 @@ sprintly.products = {};
 
 /**
  * @param {Array.<Sprintly.Product>} products list of product resources.
+ * @return {Promise} Resolve with list of products.
  * @private
  */
 sprintly.prepareProducts = function(products) {
@@ -37,6 +50,7 @@ sprintly.prepareProducts = function(products) {
     if (!products.some(function(p) {
       return p.id == id;
     })) {
+      this.products[id].dispose();
       delete this.products[id];
     }
   }
@@ -46,6 +60,13 @@ sprintly.prepareProducts = function(products) {
       sprintly.products[prod.id] = new sprintly.Product(sprintly.service, prod);
     }
   }
+  var db_ready = [];
+  for (var name in sprintly.products) {
+    db_ready.push(sprintly.products[name].onReady);
+  }
+  return Promise.all(db_ready).then(function() {
+    return sprintly.products;
+  });
 };
 
 
@@ -62,13 +83,14 @@ sprintly.login = function(username, password, remember) {
     localStorage.removeItem('user-profile');
   }
   return sprintly.service.login(username, password).then(function(products) {
+    var profile = sprintly.service.getProfile();
     if (remember) {
-      var profile = sprintly.service.getProfile();
       localStorage.setItem('user-profile', JSON.stringify(profile));
-      sprintly.dispatchReady(profile);
     }
-    sprintly.prepareProducts(products);
-    window.dispatchEvent(new CustomEvent('sprintly-login'));
+    window.dispatchEvent(new CustomEvent(sprintly.EventType.LOGIN));
+    return sprintly.prepareProducts(products).then(function() {
+      window.dispatchEvent(new CustomEvent(sprintly.EventType.READY));
+    })
   }, function(e) {
     localStorage.removeItem('user-profile');
     for (var id in sprintly.products) {
@@ -77,21 +99,6 @@ sprintly.login = function(username, password, remember) {
     }
     window.dispatchEvent(new CustomEvent('sprintly-login-fail'));
   });
-};
-
-
-/**
- * Dispatch ready event to window.
- * @param profile
- * @private
- */
-sprintly.dispatchReady = function(profile) {
-  var event = new CustomEvent('sprintly-ready', {
-    detail: {
-      profile: profile
-    }
-  });
-  window.dispatchEvent(event);
 };
 
 
@@ -106,29 +113,17 @@ sprintly.run = function() {
   if (profile) {
     profile = JSON.parse(profile);
     sprintly.service.setProfile(profile);
-    sprintly.prepareProducts(profile.products);
-    // dispatch event when all database in the products are ready.
-    var db_ready = [];
-    for (var name in sprintly.products) {
-      db_ready.push(new Promise(function(resolve, reject) {
-        sprintly.products[name].db.onReady(function(e) {
-          if (e) {
-            reject(e);
-          } else {
-            resolve(true);
-          }
-        });
-      }));
-    }
-    return Promise.all(db_ready).then(function() {
-      sprintly.dispatchReady(profile);
-      return profile.products;
+    return sprintly.prepareProducts(profile.products).then(function() {
+      var event = new CustomEvent(sprintly.EventType.READY, {
+        detail: {
+          profile: profile
+        }
+      });
+      window.dispatchEvent(event);
     });
   } else {
     return Promise.reject(false);
   }
 };
 
-
-goog.exportSymbol('sprintly', sprintly);
 
