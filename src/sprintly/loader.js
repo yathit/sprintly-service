@@ -12,7 +12,6 @@
 /**
  * @type {sprintly.Service} main service.
  * @final
- * @export
  */
 sprintly.service = new sprintly.Service();
 

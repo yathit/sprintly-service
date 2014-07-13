@@ -62,10 +62,10 @@ EntityService.prototype.remove = function(callback, name, id, token) {
 
 /**
  * List collection.
- * @param {function(number, Array.<!Object>, ?string)} callback return nullable paging token and
+ * @param {function(number, Array.<!Object>, *)} callback return nullable paging token and
  * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
  * @param {string} name entity name
- * @param {?string} token paging token. If paging token is not provided, paging token should be
+ * @param {*} token paging token. If paging token is not provided, paging token should be
  * read from the database.
  */
 EntityService.prototype.list = function(callback, name, token) {

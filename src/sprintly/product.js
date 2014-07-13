@@ -36,11 +36,13 @@ sprintly.Product = function(service, product) {
   console.assert(product.id);
 
   /**
+   * @final
    * @type {sprintly.Service}
    */
   this.service = service;
 
   /**
+   * @final
    * @type {Sprintly.Product}
    */
   this.product = product;
@@ -51,14 +53,19 @@ sprintly.Product = function(service, product) {
   this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
 
   /**
-   * Item entity.
-   * @type {sprintly.Entity}
-   * @final
+   * List of listeners.
+   * @type {Object.<Function>}
+   * @private
    */
-  this.Item = null;
+  this.listeners_ = {};
+  /**
+   * List of scopes listeners.
+   * @type {Object.<Object>}
+   * @private
+   */
+  this.listenerScopes_ = {};
 
   var me = this;
-
   /**
    * Resolve on Product entities are ready.
    * @type {Promise} resolve with `this` and reject with database Error.
@@ -67,15 +74,11 @@ sprintly.Product = function(service, product) {
     me.db.onReady(function(e) {
       if (e) {
         reject(e);
-        return;
+      } else {
+        resolve(this);
       }
-      this.Item = new ydn.db.sync.Entity(this, 'items', this.db);
-
-      resolve(this);
-      setTimeout(this.update.bind(this), 10);
     }, me);
   });
-
 
 };
 
@@ -101,7 +104,7 @@ sprintly.Product.prototype.request = function(callback, path, method, params, bo
 
 
 /**
- * Send HTTP GET request.
+ * Fetch a resource.
  * @param {function(number, !Object, ?string)} callback status code and result
  * @param {string} name entity name
  * @param {IDBKey} id entity id
@@ -119,7 +122,7 @@ sprintly.Product.prototype.get = function(callback, name, id, token) {
 
 
 /**
- * Write collection.
+ * Create a resource.
  * @param {function(number, !Object, IDBKey, ?string)} callback status code, validator and result
  * @param {IDBKey} name entity name
  * @param {Object} obj
@@ -136,7 +139,7 @@ sprintly.Product.prototype.add = function(callback, name, obj) {
 
 
 /**
- * Write collection.
+ * Update a resource.
  * @param {function(number, !Object, IDBKey, ?string)} callback status code and result
  * @param {string} name entity name
  * @param {Object} obj entity value
@@ -156,7 +159,7 @@ sprintly.Product.prototype.put = function(callback, name, obj, id, token) {
 
 
 /**
- * Write collection.
+ * Remove a resource.
  * @param {function(number)} callback status code and result
  * @param {string} name entity name
  * @param {IDBKey} id entity id
@@ -174,26 +177,44 @@ sprintly.Product.prototype.remove = function(callback, name, id, token) {
 
 
 /**
+ * Update refractory period.
+ * @type {number}
+ */
+sprintly.Product.prototype.refractoryPeriod = 2 * 60 * 1000;
+
+
+/**
+ * Update hibernate period.
+ * @type {number}
+ */
+sprintly.Product.prototype.hibernatePeriod = 1 * 60 * 60 * 1000;
+
+
+/**
  * List collection.
  * @param {function(number, Array.<!Object>, ?string)} callback return nullable paging token and
  * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
  * @param {string} name entity name
- * @param {?string} token paging token. If paging token is not provided, paging token should be
- * read from the database.
+ * @param {Object} params query parameter.
+ * @private
  */
-sprintly.Product.prototype.list = function(callback, name, token) {
-  var params = {status: 'backlog,in-progress,completed,accepted'};
-  if (token) {
-    params['offset'] = token;
-  }
+sprintly.Product.prototype.list_ = function(callback, name, params) {
+  var me = this;
   this.request(function(json, raw) {
-    if (raw.status == 200) { // OK, Not Found
+    if (raw.status == 200) { // OK
       if (json && json.length > 0) {
-        token += json.length;
+        params.offset += json.length;
       } else {
-        token = null;
+        params = null;
       }
-      callback(raw.status, json, token);
+      callback(raw.status, json, params);
+      me.dispatchEvent({
+        entity: name,
+        type: 'list',
+        total: params.offset,
+        done: !params.offset
+      });
+      me.db.put('meta', name + '/lastFetchTime', {timestamp: new Date().getTime()});
     } else {
       callback(raw.status, new Error(raw.statusText));
     }
@@ -202,10 +223,104 @@ sprintly.Product.prototype.list = function(callback, name, token) {
 
 
 /**
- * Update all entities.
+ * List collection.
+ * @param {function(number, Array.<!Object>, ?string)} callback return nullable paging token and
+ * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
+ * @param {string} name entity name
+ * @param {*} token paging token. If paging token is not provided, paging token should be
+ * read from the database.
  */
-sprintly.Product.prototype.update = function() {
-  this.Item.update();
+sprintly.Product.prototype.list = function(callback, name, token) {
+  if (token != null) {
+    // continuing next paging
+    this.list_(callback, name, token);
+  } else {
+    // start of fetching collection, determine whether fetch all or part of it.
+    var params = {};
+    if (name == 'items') {
+      params.status = 'backlog,in-progress';
+    }
+    this.db.get('meta', name + '/lastFetchTime').always(function(obj) {
+      if (obj) {
+        var now = new Date().getTime();
+        params.status = 'backlog,in-progress';
+        if (now - obj.timestamp < this.refractoryPeriod) {
+          callback(200, [], null); // no need to update
+        } else if (now - obj.timestamp < this.hibernatePeriod) {
+          this.db.count(name).done(function(cnt) {
+            params.offset = cnt;
+            this.list_(callback, name, params);
+          }, this);
+        } else {
+          this.list_(callback, name, params);
+        }
+      } else {
+        if (name == 'items') {
+          params.status = 'backlog,in-progress,completed,accepted';
+        }
+        this.list_(callback, name, params);
+      }
+    }, this);
+  }
+
+};
+
+
+/**
+ * Dispatch event to listeners.
+ * @param {Object} obj object to dispatch as event.
+ * @protected
+ */
+sprintly.Product.prototype.dispatchEvent = function(obj) {
+  for (var id in this.listeners_) {
+    this.listeners_[id].call(this.listenerScopes_[id], obj);
+  }
+};
+
+
+/**
+ * @typeof {{
+ *   entity: string
+ *   type: string,
+ *   total: number,
+ *   done: boolean
+ * }}
+ * @property {string} entity entity name.
+ * @property {string} type type of event.
+ * @property {number} total total number of entities processed.
+ * @property {boolean} done indicate current process is finished.
+ */
+sprintly.Product.EventObject;
+
+
+/**
+ * Listen backend update events.
+ * @param {function(this: T, Object)} listener invoke with update custome event.
+ * @param {T=} scope object to invoke function in.
+ * @template {T}
+ * @returns {string} listener key.
+ */
+sprintly.Product.prototype.listen = function(listener, scope) {
+  var id = 'L' + Math.random();
+  this.listeners_[id] = listener;
+  this.listenerScopes_[id] = scope;
+  return id;
+};
+
+
+/**
+ * Remove listener. It is safe to call multiple times.
+ * @param {string} key listener key
+ * @returns {boolean} `true` if the listener found.
+ */
+sprintly.Product.prototype.unlisten = function(key) {
+  if (this.listeners_[key]) {
+    delete this.listeners_[key];
+    delete this.listenerScopes_[key];
+    return true;
+  } else {
+    return false;
+  }
 };
 
 
@@ -227,6 +342,8 @@ sprintly.Product.prototype.dispose = function() {
  */
 sprintly.Product.schema = {
   stores: [ydn.db.sync.Entity.schema, {
+    name: 'meta'
+  }, {
     name: 'items',
     keyPath: 'number',
     autoIncrement: true,

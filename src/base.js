@@ -20,9 +20,11 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
+// define namespaces
 var app = {};
 app.model = {};
 app.ui = {};
+app.ui.page = {};
 
 
 

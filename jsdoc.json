@@ -4,7 +4,7 @@
   },
   "plugins": ["plugins/markdown"],
   "source": {
-    "exclude": ["src/base.js", "src/deps.js"]
+    "excludePattern": "src/(ui|model)/*"
   },
   "templates": {
     "cleverLinks": true,

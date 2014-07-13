@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <title>Offline app for sprint.ly</title>
   <link href="app.css" rel="stylesheet" type="text/css" />
-  <script src="jsc/ydn.db-core-sync.js"></script>
+  <script src="lib/ydn.db-core-sync.js"></script>
   <script src="src/sprintly/service.js"></script>
   <script src="src/sprintly/product.js"></script>
   <script src="src/sprintly/loader.js"></script>
   <script src="src/base.js"></script>
   <script src="src/model/setting.js"></script>
+  <script src="src/sprintly/entity-list.js"></script>
   <script src="src/ui/header.js"></script>
   <script src="src/ui/setting.js"></script>
+  <script src="src/ui/page/item-list.js"></script>
 </head>
 <body>
   <header>
@@ -27,15 +29,13 @@
   </section>
   <div id="desktop">
     <nav>
-      <section id="product-selection"></section>
+      <div id="setting"></div>
+      <div id="menu">
+        <a href="#page-items-list">Items</a>
+      </div>
     </nav>
-    <article>
-      <section id="page-item-list">
+    <article id="workspace">
 
-      </section>
-      <section id="page-item">
-
-      </section>
 
     </article>
 

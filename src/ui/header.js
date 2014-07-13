@@ -41,4 +41,3 @@ app.ui.Header.prototype.onProductChange = function(e) {
 app.ui.Header.prototype.refresh = function() {
 
 };
-
