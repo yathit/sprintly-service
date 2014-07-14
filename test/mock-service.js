@@ -11,7 +11,7 @@
  * @param {Object} list of resources as key value pairs. Primary key is in `id` field.
  * @constructor
  */
-function MockService(list) {
+function MockEntityService(list) {
   this.resources = list || {};
 }
 
@@ -23,7 +23,7 @@ function MockService(list) {
  * @param {IDBKey} id entity id
  * @param {?string} token validator token
  */
-MockService.prototype.get = function(callback, name, id, token) {
+MockEntityService.prototype.get = function(callback, name, id, token) {
   var status = 404;
   var obj = null;
   if (this.list[id]) {
@@ -42,7 +42,7 @@ MockService.prototype.get = function(callback, name, id, token) {
  * @param {IDBKey} name entity name
  * @param {Object} obj
  */
-MockService.prototype.add = function(callback, name, obj) {
+MockEntityService.prototype.add = function(callback, name, obj) {
   this.list[obj.id] = obj;
   setTimeout(function() {
     callback(201, obj, obj.id, null);
@@ -58,7 +58,7 @@ MockService.prototype.add = function(callback, name, obj) {
  * @param {IDBKey} id entity id
  * @param {string} token validator token
  */
-MockService.prototype.put = function(callback, name, obj, id, token) {
+MockEntityService.prototype.put = function(callback, name, obj, id, token) {
   var status = this.list[id] ? 200 : 201;
   this.list[id] = obj;
   setTimeout(function() {
@@ -74,7 +74,7 @@ MockService.prototype.put = function(callback, name, obj, id, token) {
  * @param {IDBKey} id entity id
  * @param {string} token validator token
  */
-MockService.prototype.remove = function(callback, name, id, token) {
+MockEntityService.prototype.remove = function(callback, name, id, token) {
   var status = 404;
   if (this.list[id]) {
     delete this.list[id];
@@ -94,7 +94,7 @@ MockService.prototype.remove = function(callback, name, id, token) {
  * @param {?string} token paging token. If paging token is not provided, paging token should be
  * read from the database.
  */
-MockService.prototype.list = function(callback, name, token) {
+MockEntityService.prototype.list = function(callback, name, token) {
   var keys = Object.keys(this.resources);
   var arr = [];
   var ppi = 2;

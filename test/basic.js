@@ -24,7 +24,7 @@
     };
     var db_name = 'sync-crud-add-1';
     var data_1 = { test: 'test value', name: 'name 1', id: 1 };
-    var service = new MockService();
+    var service = new MockEntityService();
     var db = new ydn.db.Storage(db_name, schema);
     db.onReady(function() {
       var fooEntity = new ydn.db.sync.Entity(service, 'foo', db);
@@ -56,7 +56,7 @@
     };
     var db_name = 'sync-crud-put-1';
     var data_1 = { test: 'test value', name: 'name 1', id: 1 };
-    var service = new MockService({1: data_1});
+    var service = new MockEntityService({1: data_1});
     var db = new ydn.db.Storage(db_name, schema);
     db.onReady(function() {
       var fooEntity = new ydn.db.sync.Entity(service, 'foo', db);
@@ -91,19 +91,22 @@
     };
     var db_name = 'sync-crud-remove-1';
     var data_1 = { test: 'test value', name: 'name 1', id: 1 };
-    var service = new MockService();
+    var service = new MockEntityService();
     var db = new ydn.db.Storage(db_name, schema);
     db.onReady(function() {
       var fooEntity = new ydn.db.sync.Entity(service, 'foo', db);
       fooEntity.put(data_1.id, data_1).always(function() {
-        fooEntity.remove(1).always(function(cnt) {
+        fooEntity.remove(data_1.id).always(function(cnt) {
           equal(cnt, 1, 'remove one entry');
-          db.values('foo', 'id', ydn.db.KeyRange.only(1)).always(function(x) {
+          db.values('foo', 'id', ydn.db.KeyRange.only(1)).then(function(x) {
             equal(0, x.length, 'no data');
-            ydn.db.deleteDatabase(db.getName(), db.getType());
-            db.close();
-            start();
           });
+        }, function(e) {
+          ok(!ok, e + ' ' + e.name + ' ' + e.message);
+        }).always(function() {
+          ydn.db.deleteDatabase(db.getName(), db.getType());
+          db.close();
+          start();
         });
       });
     });
@@ -130,7 +133,7 @@
       '2': {test: 'test value', name: 'name 2', id: 2 },
       '3': {test: 'test value', name: 'name 3', id: 3 }
     };
-    var service = new MockService(data);
+    var service = new MockEntityService(data);
     var db = new ydn.db.Storage(db_name, schema);
     db.onReady(function() {
       db.clear('foo');

@@ -84,6 +84,25 @@ sprintly.Entity = function(name, limit) {
 
 
 /**
+ * Get number of cached entities.
+ * @returns {number}
+ */
+sprintly.Entity.prototype.size = function() {
+  return this.records.length;
+};
+
+
+/**
+ * Get cached entity at given index.
+ * @param {number} idx index. Index must be grater than 0 and less then the size.
+ * @return {!Object} record at index idx
+ */
+sprintly.Entity.prototype.get = function(idx) {
+  return this.records[idx];
+};
+
+
+/**
  * Set target product.
  * This will initiate updating entity.
  * @param {sprintly.Product} product
@@ -95,8 +114,15 @@ sprintly.Entity.prototype.setProduct = function(product) {
   this.product = product;
   this.listenerKey_ = this.product.listen(this.onUpdate_, this);
   this.entity = new ydn.db.sync.Entity(this.product, this.name, this.product.db);
-  this.onChanged();
+  this.entity.update();
 };
+
+
+/**
+ * Change event trigger check refractory period.
+ * @type {number}
+ */
+sprintly.Entity.prototype.refractoryPeriod = 500;
 
 
 /**
@@ -105,12 +131,13 @@ sprintly.Entity.prototype.setProduct = function(product) {
  * @private
  */
 sprintly.Entity.prototype.onUpdate_ = function(obj) {
-  if (obj.entity == this.name && (this.lastUpdateCheck_ - new Date().getTime()) < 500) {
+  if (obj.entity == this.name && (this.lastUpdateCheck_ - new Date().getTime()) < this.refractoryPeriod) {
     this.product.db.values(this.name, this.limit, this.offset).done(function(objs) {
       this.lastUpdateCheck_ = new Date().getTime();
       if (objs.length != this.records.length ||
           objs[0].id != this.records[0].id ||
           objs[objs.length - 1].id != this.records[objs.length - 1].id) {
+        this.records = objs;
         this.onChanged();
       }
     }, this);

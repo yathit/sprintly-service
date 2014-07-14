@@ -1,8 +1,8 @@
-  /**
-   * @fileOverview HTTP transport service to sprintly backend.
-   *
-   * @author kyawtun@yathit.com (Kyaw Tun)
-   */
+/**
+ * @fileOverview HTTP transport service to sprintly backend.
+ *
+ * @author kyawtun@yathit.com (Kyaw Tun)
+ */
 
 /** @namespace */
 sprintly = {};
