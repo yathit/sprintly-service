@@ -8,10 +8,10 @@
 
 /**
  * Create sprint.ly service.
- * @param {string=} baseUrl Base URL to make backend request.
+ * @param {Sprintly.Product} prod a Sprintly Product.
  * @constructor
  */
-MockSprintlyService = function(baseUrl) {
+MockSprintlyService = function(prod) {
   /**
    * @type {?string}
    * @protected
@@ -26,10 +26,7 @@ MockSprintlyService = function(baseUrl) {
    * List of products.
    * @type {Array.<Sprintly.Product>}
    */
-  this.products = [{
-    id: 1,
-    name: 'sprint.ly'
-  }];
+  this.products = [prod];
 
   this.baseUrl = '';
 };
@@ -54,6 +51,7 @@ MockSprintlyService.prototype.request = function(options) {
     body: json,
     headers: {}
   };
+  console.log(options);
   options.callback(json, raw);
 };
 

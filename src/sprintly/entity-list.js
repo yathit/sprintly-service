@@ -19,7 +19,7 @@
 
 
 /**
- * Sprintly Entity.
+ * Sprintly Entity collection.
  *
  * Represent spirnt.ly entities, such as, Items, Comments, etc as available in
  * [the sprint.ly API]{@link https://sprintly.uservoice.com/knowledgebase/topics/15784-api}.
@@ -28,7 +28,7 @@
  * @constructor
  * @disposable
  */
-sprintly.Entity = function(name, limit) {
+sprintly.EntityList = function(name, limit) {
 
   /**
    * @final
@@ -87,7 +87,7 @@ sprintly.Entity = function(name, limit) {
  * Get number of cached entities.
  * @returns {number}
  */
-sprintly.Entity.prototype.size = function() {
+sprintly.EntityList.prototype.size = function() {
   return this.records.length;
 };
 
@@ -97,7 +97,7 @@ sprintly.Entity.prototype.size = function() {
  * @param {number} idx index. Index must be grater than 0 and less then the size.
  * @return {!Object} record at index idx
  */
-sprintly.Entity.prototype.get = function(idx) {
+sprintly.EntityList.prototype.get = function(idx) {
   return this.records[idx];
 };
 
@@ -107,14 +107,16 @@ sprintly.Entity.prototype.get = function(idx) {
  * This will initiate updating entity.
  * @param {sprintly.Product} product
  */
-sprintly.Entity.prototype.setProduct = function(product) {
+sprintly.EntityList.prototype.setProduct = function(product) {
   if (this.product) {
     this.product.unlisten(this.listenerKey_);
   }
   this.product = product;
   this.listenerKey_ = this.product.listen(this.onUpdate_, this);
   this.entity = new ydn.db.sync.Entity(this.product, this.name, this.product.db);
-  this.entity.update();
+  this.entity.update().done(function() {
+    this.checkUpdated_();
+  }, this);
 };
 
 
@@ -122,7 +124,26 @@ sprintly.Entity.prototype.setProduct = function(product) {
  * Change event trigger check refractory period.
  * @type {number}
  */
-sprintly.Entity.prototype.refractoryPeriod = 500;
+sprintly.EntityList.prototype.refractoryPeriod = 500;
+
+
+/**
+ * Listen entity update event.
+ * @private
+ */
+sprintly.EntityList.prototype.checkUpdated_ = function() {
+  this.product.db.values(this.name, null, this.limit, this.offset).done(function(objs) {
+    this.lastUpdateCheck_ = new Date().getTime();
+    if (objs.length == 0) {
+
+    } else if (objs.length != this.records.length ||
+        objs[0].id != this.records[0].id ||
+        objs[objs.length - 1].id != this.records[objs.length - 1].id) {
+      this.records = objs;
+      this.onChanged();
+    }
+  }, this);
+};
 
 
 /**
@@ -130,17 +151,9 @@ sprintly.Entity.prototype.refractoryPeriod = 500;
  * @param {sprintly.Product.EventObject} obj
  * @private
  */
-sprintly.Entity.prototype.onUpdate_ = function(obj) {
+sprintly.EntityList.prototype.onUpdate_ = function(obj) {
   if (obj.entity == this.name && (this.lastUpdateCheck_ - new Date().getTime()) < this.refractoryPeriod) {
-    this.product.db.values(this.name, this.limit, this.offset).done(function(objs) {
-      this.lastUpdateCheck_ = new Date().getTime();
-      if (objs.length != this.records.length ||
-          objs[0].id != this.records[0].id ||
-          objs[objs.length - 1].id != this.records[objs.length - 1].id) {
-        this.records = objs;
-        this.onChanged();
-      }
-    }, this);
+    this.checkUpdated_();
   }
 };
 
@@ -148,13 +161,13 @@ sprintly.Entity.prototype.onUpdate_ = function(obj) {
 /**
  * Handle on change event.
  */
-sprintly.Entity.prototype.onChanged = function() {};
+sprintly.EntityList.prototype.onChanged = function() {};
 
 
 /**
  * Dispose this object by releasing resources.
  */
-sprintly.Entity.prototype.dispose = function() {
+sprintly.EntityList.prototype.dispose = function() {
   if (this.product) {
     this.product.unlisten(this.listenerKey_);
     this.entity = null;

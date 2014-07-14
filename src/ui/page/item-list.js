@@ -19,13 +19,13 @@
 
 /**
  * Application header component.
- * @param {sprintly.Entity} model
+ * @param {sprintly.EntityList} model
  * @constructor
  */
 app.ui.page.ItemList = function(model) {
   /**
    * @protected
-   * @type {sprintly.Entity}
+   * @type {sprintly.EntityList}
    */
   this.model = model;
   this.root_ = document.createElement('div');

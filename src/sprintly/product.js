@@ -192,7 +192,7 @@ sprintly.Product.prototype.hibernatePeriod = 1 * 60 * 60 * 1000;
 
 /**
  * List collection.
- * @param {function(number, Array.<!Object>, ?string)} callback return nullable paging token and
+ * @param {function(number, Array.<!Object>, Object} callback return nullable paging token and
  * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
  * @param {string} name entity name
  * @param {Object} params query parameter.
@@ -211,10 +211,10 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
       me.dispatchEvent({
         entity: name,
         type: 'list',
-        total: params.offset,
-        done: !params.offset
+        total: params ? params.offset || 0 : 0,
+        done: !params
       });
-      me.db.put('meta', name + '/lastFetchTime', {timestamp: new Date().getTime()});
+      me.db.put('meta', {timestamp: new Date().getTime()}, name + '/lastFetchTime');
     } else {
       callback(raw.status, new Error(raw.statusText));
     }
@@ -233,7 +233,7 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
 sprintly.Product.prototype.list = function(callback, name, token) {
   if (token != null) {
     // continuing next paging
-    this.list_(callback, name, token);
+    this.list_(callback, name, {offset: token});
   } else {
     // start of fetching collection, determine whether fetch all or part of it.
     var params = {};

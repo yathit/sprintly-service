@@ -11,7 +11,7 @@
 
   asyncTest('change-event', 3, function() {
     var db_name = 'sync-load-change-event-1';
-    var data = {};
+    var data = [];
     for (var i = 1; i <= 10; i++) {
       data[i] = {value: 'v' + Math.random(), id: i};
     }
@@ -19,14 +19,18 @@
       name: 'test',
       id: 1
     };
-    var service = new MockEntityService(data);
-    var product = new sprintly.Product(service, prod);
-    var fooEntity = new sprintly.Entity('items', 4);
+
+    var product = new sprintly.Product({}, prod);
+    product.request = function(callback, path, method, params, body) {
+      console.log(path, method, params, body);
+      if (method == 'GET' && path == 'items.json') {
+        callback(data, {status: 200});
+      }
+    };
+    var fooEntity = new sprintly.EntityList('items', 4);
     var db = product.db;
     product.onReady.then(function() {
-      db.clear('items').always(function(e) {
-        console.log(e);
-      });
+      db.clear('items');
       fooEntity.onChanged = function() {
         equal(fooEntity.size(), 4, 'number of data cached');
         var r0 = fooEntity.get(0);
