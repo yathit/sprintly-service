@@ -51,7 +51,7 @@ document.getElementById('login').onclick = function(e) {
 
 // initialize models
 app.model.setting = new app.model.Setting();
-app.model.items = new app.model.EntityList('items');
+app.model.items = new sprintly.EntityList('items');
 
 // initialize UI
 app.ui.header = new app.ui.Header();
@@ -87,6 +87,7 @@ app.route = function(hash) {
     app.switchPage(m[1], m[2]);
   } else {
     console.log('unknwon hash ' + hash);
+    location.hash = 'items'; // go home
   }
 };
 

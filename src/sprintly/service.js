@@ -38,7 +38,7 @@ sprintly.Service = function(baseUrl) {
 /**
  * @define {string} sprint.ly backend base URL.
  */
-sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
+sprintly.Service.BASE_URL = 'https://sprint.ly/api/';
 
 
 /**
@@ -47,6 +47,7 @@ sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
  *   path: string,
  *   method: ?string,
  *   params: ?Object,
+ *   headers: ?Object,
  *   body: string|Object,
  *   callback: Function
  * }} options
@@ -75,6 +76,11 @@ sprintly.Service.prototype.request = function(options) {
   url += '?' + query.join('&');
   xhr.open(method, url, true);
   xhr.setRequestHeader('Authorization', me.authHeader);
+  if (options.headers) {
+    for (var name in options.headers) {
+      xhr.setRequestHeader(name, options.headers[name]);
+    }
+  }
   xhr.onload = function(e) {
     var raw = {
       status: xhr.status,
