@@ -13,7 +13,11 @@
     var db_name = 'sync-load-change-event-1';
     var data = [];
     for (var i = 1; i <= 10; i++) {
-      data[i] = {value: 'v' + Math.random(), id: i};
+      data[i] = {
+        title: 'Title ' + Math.random(),
+        status: "backlog",
+        type: "task",
+        number: i};
     }
     var prod = {
       name: 'test',
@@ -29,6 +33,7 @@
     };
     var fooEntity = new sprintly.EntityList('items', 4);
     var db = product.db;
+    QUnit.stop();
     product.onReady.then(function() {
       db.clear('items');
       fooEntity.onChanged = function() {
@@ -39,7 +44,7 @@
         ok(!!r3 && r3.id == 4, 'last record');
         ydn.db.deleteDatabase(db.getName(), db.getType());
         db.close();
-        start();
+        QUnit.start();
       };
       fooEntity.setProduct(product);
     }, function(e) {

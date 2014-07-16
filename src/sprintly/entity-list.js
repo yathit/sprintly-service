@@ -11,7 +11,7 @@
 // limitations under the License.
 
 /**
- * @fileOverview Sprintly Entity.
+ * @fileOverview Sprintly entity list.
  *
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
