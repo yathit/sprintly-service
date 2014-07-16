@@ -203,6 +203,12 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
   this.request(function(json, raw) {
     if (raw.status == 200) { // OK
       if (json && json.length > 0) {
+        if (!params) {
+          params = {};
+        }
+        if (!params.offset) {
+          params.offset = 0;
+        }
         params.offset += json.length;
       } else {
         params = null;
@@ -233,7 +239,7 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
 sprintly.Product.prototype.list = function(callback, name, token) {
   if (token != null) {
     // continuing next paging
-    this.list_(callback, name, {offset: token});
+    this.list_(callback, name, token);
   } else {
     // start of fetching collection, determine whether fetch all or part of it.
     var params = {};

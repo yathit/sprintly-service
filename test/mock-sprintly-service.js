@@ -29,8 +29,11 @@ MockSprintlyService = function(prod) {
   this.products = [prod];
 
   this.baseUrl = '';
-};
 
+  this.resources = {};
+
+  this.requestId = 0;
+};
 
 
 /**
@@ -44,15 +47,40 @@ MockSprintlyService = function(prod) {
  * }} options
  */
 MockSprintlyService.prototype.request = function(options) {
-  var json = {};
+  console.log(options);
+  if (this.requestId++ > 5) {
+    throw new Error('TooManyRequest');
+  }
+  var m = options.path.match(/products\/(\d+)\/([a-z]+)/);
   var raw = {
-    status: 200,
-    statusText: 'OK',
-    body: json,
+    status: 400,
+    statusText: 'Invalid',
+    body: {},
     headers: {}
   };
-  console.log(options);
-  options.callback(json, raw);
+  if (!m) {
+    options.callback(false, raw);
+  }
+  var productId = m[1];
+  var entity = m[2];
+  if (!entity) {
+    options.callback(false, raw);
+  }
+  var entities = this.resources[entity];
+  if (!entity) {
+    raw.body = 'invalid entity ' + entity;
+    options.callback(false, raw);
+  }
+  var params = options.params || {};
+  var offset = params['offset'] || 0;
+  var limit = params['limit'] || 100;
+  var json = entities.slice(offset, limit);
+  raw.status = 200;
+  raw.statusText = 'OK';
+  raw.body = json;
+  setTimeout(function() {
+    options.callback(json, raw);
+  }, 10);
 };
 
 
