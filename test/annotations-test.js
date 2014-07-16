@@ -6,7 +6,7 @@
   service.login('kyawtun@yathit.com', '9cScDgG2Q5rAwjLAFzk75ZyqHFksVLdK');
   var itemId = 6315;
 
-  module('api,items', {
+  module('api,annotations', {
     setup: function() {
 
     },
@@ -18,7 +18,7 @@
   asyncTest('get', 4, function() {
     var id = 727735;
     service.request({
-      path: 'products/1/items/' + itemId + '/comments/' + id + '.json',
+      path: 'products/1/items/' + itemId + '/annotations/' + id + '.json',
       callback: function(json, raw) {
         console.log(json);
         equal(raw.status, 200, 'status code');
@@ -34,14 +34,16 @@
   asyncTest('create,form', 4, function() {
     var type = 'comment';
     var obj = {
-      body: 'Awesome comment'
+      body: 'Awesome comment',
+      label: 'HipChat',
+      action: 'Joe broke the build'
     };
     var data = new FormData();
     for (var name in obj) {
       data.append(name, obj[name]);
     }
     service.request({
-      path: 'products/1/items/' + itemId + '/comments.json',
+      path: 'products/1/items/' + itemId + '/annotations.json',
       method: 'POST',
       body: data,
       callback: function(json, raw) {
@@ -58,7 +60,7 @@
 
   asyncTest('collection', 4, function() {
     service.request({
-      path: 'products/1/items/' + itemId + '/comments.json',
+      path: 'products/1/items/' + itemId + '/annotations.json',
       callback: function(json, raw) {
         console.log(json);
         equal(raw.status, 200, 'status code');
@@ -72,3 +74,4 @@
 
 
 })();
+
