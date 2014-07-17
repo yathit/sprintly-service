@@ -24,23 +24,19 @@
  */
 app.model.User = function() {
   this.userId = null;
-  this.activeProductId = null;
+  this.activeProductId = app.getProductIdFromUrl();
 };
 
 
 /**
  * Load user setting.
  * @param {string} userid
- * @param {string} pid product id.
  */
-app.model.User.prototype.setUser = function(userid, pid) {
+app.model.User.prototype.setUser = function(userid) {
   this.userId = userid;
   var setting = localStorage.getItem('setting-' + this.userId);
   if (setting) {
     this.fromJSON(JSON.parse(setting));
-  }
-  if (pid) {
-    this.setActiveProduct(pid, true);
   }
   this.onChanged();
 };
@@ -56,27 +52,28 @@ app.model.User.prototype.toJSON = function() {
 
 app.model.User.prototype.fromJSON = function(json) {
   if (this.userId == json.userId) {
-    this.activeProductId = json.activeProductId;
+    this.setActiveProduct(json.activeProductId);
   }
 };
 
 
 /**
  * @param {string=} id if not provided or invalid, the first product will be selected.
- * @param {boolean=} silence
  * @protected
  */
-app.model.User.prototype.setActiveProduct = function(id, silence) {
+app.model.User.prototype.setActiveProduct = function(id) {
+  if (!id || this.activeProductId == id) {
+    return;
+  }
   var product = sprintly.products[id];
-  if (product && product.product.id != this.activeProductId) {
+  if (product) {
     this.activeProductId = id;
-    if (!silence) {
-      this.onChanged();
-    }
     localStorage.setItem('setting-' + this.userId, JSON.stringify(this.toJSON()));
-    if (location.search != id) {
-      location.search = id;
-    }
+    window.dispatchEvent(new CustomEvent('active-product', {
+      detail: {
+        activeProductId: this.activeProductId
+      }
+    }))
   }
 };
 

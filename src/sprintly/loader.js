@@ -85,6 +85,8 @@ sprintly.login = function(username, password, remember) {
     var profile = sprintly.service.getProfile();
     if (remember) {
       localStorage.setItem('user-profile', JSON.stringify(profile));
+    } else {
+      sessionStorage.setItem('user-profile', JSON.stringify(profile));
     }
     window.dispatchEvent(new CustomEvent(sprintly.EventType.LOGIN));
     return sprintly.prepareProducts(products).then(function() {
@@ -92,6 +94,7 @@ sprintly.login = function(username, password, remember) {
     })
   }, function(e) {
     localStorage.removeItem('user-profile');
+    sessionStorage.removeItem('user-profile');
     for (var id in sprintly.products) {
       sprintly.products[id].dispose();
       delete sprintly.products[id];
@@ -108,7 +111,7 @@ sprintly.login = function(username, password, remember) {
  * @export
  */
 sprintly.run = function() {
-  var profile = localStorage.getItem('user-profile');
+  var profile = localStorage.getItem('user-profile') || sessionStorage.getItem('user-profile');
   if (profile) {
     profile = JSON.parse(profile);
     sprintly.service.setProfile(profile);

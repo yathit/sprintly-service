@@ -59,11 +59,12 @@ app.ui.Setting.prototype.refresh = function() {
   span.textContent = this.user.userId;
   var select = this.root_.querySelector('select[name=products]');
   select.innerHTML = '';
+  var apid = this.user.getActiveProduct();
   for (var id in sprintly.products) {
     var option = document.createElement('option');
     option.value = id;
     option.textContent = sprintly.products[id].product.name;
-    if (this.user.activeProductId == id) {
+    if (apid == id) {
       option.setAttribute('selected', 'true');
     }
     select.appendChild(option);

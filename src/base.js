@@ -27,4 +27,12 @@ app.ui = {};
 app.ui.page = {};
 
 
+/**
+ * @returns {string}
+ */
+app.getProductIdFromUrl = function() {
+  return location.search.substr(1);
+};
+
+
 

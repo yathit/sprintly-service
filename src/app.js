@@ -31,10 +31,12 @@ app.processLogin = function(promise) {
     document.getElementById('page-login').style.display = 'none';
     document.getElementById('desktop').style.display = '';
     var profile = sprintly.service.getProfile();
-    app.model.User.current.setUser(profile.username, location.search);
-    var id = app.model.User.current.getActiveProduct();
-    if (id) {
-      location.search = id;
+    app.model.User.current.setUser(profile.username);
+    if (!location.search) {
+      var id = app.model.User.current.getActiveProduct();
+      if (id) {
+        location.search = id;
+      }
     }
   }, function() {
     document.getElementById('page-login').style.display = '';
@@ -54,6 +56,10 @@ document.getElementById('login').onclick = function(e) {
 app.ui.header = new app.ui.Header();
 app.ui.header.render(document.getElementById('setting'));
 
+/**
+ * @type {app.Workspace}
+ */
+app.workspace = new app.Workspace();
 
 /**
  * @param {string} hash
@@ -71,6 +77,13 @@ app.route = function(hash) {
 
 window.addEventListener('hashchange', function(e) {
   app.route(location.hash);
+});
+
+window.addEventListener('active-product', function(e) {
+  var id = e.detail.activeProductId;
+  if (id && app.getProductIdFromUrl() != id) {
+    location.search = id;
+  }
 });
 
 

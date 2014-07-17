@@ -19,16 +19,15 @@
 
 /**
  * Sprint.ly product workspace.
- * @param {sprintly.Product} product
  * @constructor
  */
-app.Workspace = function(product) {
+app.Workspace = function() {
   /**
    * Current product.
    * @type {sprintly.Product}
    * @protected
    */
-  this.product = product;
+  this.product = null;
 
   /**
    * @protected
