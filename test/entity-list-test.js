@@ -31,7 +31,6 @@
     var fooEntity = new sprintly.EntityList('items', 4);
     var db = product.db;
 
-
     product.onReady.then(function() {
       db.clear('items');
       fooEntity.onChanged = function() {

@@ -4,9 +4,6 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
-/** @namespace */
-sprintly = {};
-
 
 
 /**

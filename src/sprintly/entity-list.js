@@ -23,12 +23,12 @@
  *
  * Represent spirnt.ly entities, such as, Items, Comments, etc as available in
  * [the sprint.ly API]{@link https://sprintly.uservoice.com/knowledgebase/topics/15784-api}.
- * @param {name} name entity name
+ * @param {ydn.db.sync.Entity} entity name
  * @param {number=} limit paging limit. Maximum number of entities loaded into memory.
  * @constructor
  * @disposable
  */
-sprintly.EntityList = function(name, limit) {
+sprintly.EntityList = function(entity, limit) {
 
   /**
    * @final
@@ -58,7 +58,7 @@ sprintly.EntityList = function(name, limit) {
    * @protected
    * @type {ydn.db.sync.Entity}
    */
-  this.entity = null;
+  this.entity = entity;
 
   /**
    * Entity update listener key.

@@ -53,17 +53,16 @@ sprintly.Product = function(service, product) {
   this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
 
   /**
-   * List of listeners.
-   * @type {Object.<Function>}
-   * @private
+   * Item entity.
+   * @type {ydn.db.sync.Entity}
    */
-  this.listeners_ = {};
+  this.Item;
+
   /**
-   * List of scopes listeners.
-   * @type {Object.<Object>}
-   * @private
+   * Item entity.
+   * @type {ydn.db.sync.Entity}
    */
-  this.listenerScopes_ = {};
+  this.Comment;
 
   var me = this;
   /**
@@ -75,11 +74,33 @@ sprintly.Product = function(service, product) {
       if (e) {
         reject(e);
       } else {
+        /**
+         * @final
+         */
+        this.Item = new ydn.db.sync.Entity(this, sprintly.Entity.ITEM, this.db);
+        /**
+         * @final
+         */
+        this.Comment = new ydn.db.sync.Entity(this, sprintly.Entity.COMMENT, this.db);
         resolve(this);
       }
     }, me);
   });
 
+};
+
+
+/**
+ * Get sprint.ly entity by name.
+ * @param {sprintly.Entity} name
+ * @returns {ydn.db.sync.Entity}
+ */
+sprintly.Product.prototype.getEntityByName = function(name) {
+  if (name == sprintly.Entity.ITEM) {
+    return this.Item;
+  } else if (name == sprintly.Entity.COMMENT) {
+    return this.Comment;
+  }
 };
 
 
@@ -214,12 +235,6 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
         params = null;
       }
       callback(raw.status, json, params);
-      me.dispatchEvent({
-        entity: name,
-        type: 'list',
-        total: params ? params.offset || 0 : 0,
-        done: !params
-      });
       me.db.put('meta', {timestamp: new Date().getTime()}, name + '/lastFetchTime');
     } else {
       callback(raw.status, new Error(raw.statusText));
@@ -273,18 +288,6 @@ sprintly.Product.prototype.list = function(callback, name, token) {
 
 
 /**
- * Dispatch event to listeners.
- * @param {Object} obj object to dispatch as event.
- * @protected
- */
-sprintly.Product.prototype.dispatchEvent = function(obj) {
-  for (var id in this.listeners_) {
-    this.listeners_[id].call(this.listenerScopes_[id], obj);
-  }
-};
-
-
-/**
  * @typeof {{
  *   entity: string
  *   type: string,
@@ -297,37 +300,6 @@ sprintly.Product.prototype.dispatchEvent = function(obj) {
  * @property {boolean} done indicate current process is finished.
  */
 sprintly.Product.EventObject;
-
-
-/**
- * Listen backend update events.
- * @param {function(this: T, Object)} listener invoke with update custome event.
- * @param {T=} scope object to invoke function in.
- * @template {T}
- * @returns {string} listener key.
- */
-sprintly.Product.prototype.listen = function(listener, scope) {
-  var id = 'L' + Math.random();
-  this.listeners_[id] = listener;
-  this.listenerScopes_[id] = scope;
-  return id;
-};
-
-
-/**
- * Remove listener. It is safe to call multiple times.
- * @param {string} key listener key
- * @returns {boolean} `true` if the listener found.
- */
-sprintly.Product.prototype.unlisten = function(key) {
-  if (this.listeners_[key]) {
-    delete this.listeners_[key];
-    delete this.listenerScopes_[key];
-    return true;
-  } else {
-    return false;
-  }
-};
 
 
 /**
