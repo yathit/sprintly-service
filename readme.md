@@ -75,7 +75,7 @@ Build
 
 Generate documentation.
 
-    jsdoc src/**.js -t ~/work/jaguarjs-jsdoc/ -c jsdoc.json -d ./doc
+    jsdoc src/sprintly/**.js -t jsdoc-template -c jsdoc.json -d ./doc
     # only for first time
     cp -r ~/work/jaguarjs-jsdoc/static/ ./doc/
     
