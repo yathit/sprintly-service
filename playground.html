@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>sprint.ly offline module playground</title>
+    <script src="lib/ydn.db-core-sync.js"></script>
+    <script src="src/sprintly/base.js"></script>
+    <script src="src/sprintly/service.js"></script>
+    <script src="src/sprintly/product.js"></script>
+    <script src="src/sprintly/loader.js"></script>
+    <script src="src/sprintly/entity-list.js"></script>
+</head>
+<body>
+<article class="markdown-body entry-content" itemprop="mainContentOfPage"><h1>
+    <a name="user-content-sprintly-offline-module" class="anchor" href="#sprintly-offline-module" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sprint.ly offline module</h1>
+
+    <p>This javascript module is a wrapper on <a href="https://sprintly.uservoice.com/knowledgebase/topics/15784-api">Sprint.ly API</a> providing offline support and client-side full-text search.</p>
+
+    <h3>
+        <a name="user-content-browser-support" class="anchor" href="#browser-support" aria-hidden="true"><span class="octicon octicon-link"></span></a>Browser support</h3>
+
+    <p>Target browsers are Chrome 35+, Firefox 30+, Safari 8+ and IE 18+. </p>
+
+    <h3>
+        <a name="user-content-basic-usage" class="anchor" href="#basic-usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic usage</h3>
+
+    <p>All operations are asynchronous, and return <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"><code>Promise</code></a> or <a href="https://github.com/kriskowal/q/wiki/API-Reference"><code>Q.Promise</code></a> when progress notification is necessary.  </p>
+
+<pre><code>var service = new sprintly.Service();
+    service.login(username, key); // this will return list of products after successful login
+    var product = new sprintly.Product(service, {id: 1, name: 'sprint.ly'});
+</code></pre>
+
+    <p><code>Product</code> has all <a href="https://sprintly.uservoice.com/knowledgebase/topics/15784-api">sprint.ly entities</a> available via <code>Annotation</code>, <code>Attachment</code>, <code>Blocking</code>, <code>Comment</code>, <code>Deploy</code>, <code>Favorite</code>, <code>Item</code> and <code>People</code> <em>Entities</em> providing CRUD and query operations.</p>
+
+    <p>CRUD operation on <a href="http://dev.yathit.com/sprintly/api-doc/sprintly.Entity.html"><code>Entity</code></a> are <code>get</code>, <code>add</code> (create), <code>put</code> (update or create) and <code>delete</code>. These operation will invalidate both server and local. On network error, the operation will be on service queue. If not on queue, the result on <code>resolve</code> callback is consistent with server value.</p>
+
+<pre><code>product.Item.get(123).then(function(x) {
+    console.log(x);  // final data from server (~150 ms)
+    }, function(e) {
+    throw e;
+    }, function(x) {
+    console.log(x);  // local cache data (~15 ms)
+    });
+</code></pre>
+
+    <h3>
+        <a name="user-content-query" class="anchor" href="#query" aria-hidden="true"><span class="octicon octicon-link"></span></a>Query</h3>
+
+    <p>Use <a href="http://dev.yathit.com/api-reference/ydn-db/storage.html"><code>ydn.db.Storage</code></a> object on <code>product.db</code> to query data without hitting backend service.</p>
+
+<pre><code>product.db.from('items').where('assigned_to', '=', 123).list().then(function(x) {
+    console.log(x);
+    });
+</code></pre>
+
+    <p>All available queries can be found on <code>sprintly.Product.schema</code>.   </p>
+
+    <h3>
+        <a name="user-content-loader" class="anchor" href="#loader" aria-hidden="true"><span class="octicon octicon-link"></span></a>Loader</h3>
+
+    <p>A loader is available for handling user session. Start the loader by <code>sprint.run</code> method.</p>
+
+<pre><code>sprintly.run();
+</code></pre>
+
+    <p>Loader will dispatch <code>sprintly-ready</code>, <code>sprintly-login</code>, <code>sprintly-login-fail</code> and <code>sprintly-logout</code> events to <code>window</code>. Use <code>sprintly-ready</code> event to start your application.</p>
+
+<pre><code>window.addEventHandler('sprintly-ready', function(x) {
+    sprintly.product['123'].Item.get(456);
+    });
+
+    sprintly.login(username, key, true); // save user name and password in `localStorage`.
+</code></pre>
+
+    <h2>
+        <a name="user-content-documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+    <p>See generated <a href="http://dev.yathit.com/sprintly/api-doc/">API documentation</a>.</p>
+
+    <h2>
+        <a name="user-content-build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h2>
+
+    <p>Generate documentation.</p>
+
+<pre><code>jsdoc src/*.js -t ~/work/jaguarjs-jsdoc/ -c jsdoc.json -d ./doc
+    # only for first time
+    cp -r ~/work/jaguarjs-jsdoc/static/ ./doc/
+</code></pre>
+
+    <p>Upload doc</p>
+
+<pre><code>gsutil -m cp -R doc/* gs://dev.yathit.com/sprintly/api-doc/
+    # just update html
+    gsutil -m cp doc/*.html gs://dev.yathit.com/sprintly/api-doc/
+</code></pre></article>
+</body>
+</html>
