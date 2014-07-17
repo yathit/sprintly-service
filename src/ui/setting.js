@@ -20,13 +20,13 @@
 
 /**
  * Application header component.
- * @param {app.model.Setting} model
+ * @param {app.model.User} model
  * @constructor
  */
 app.ui.Setting = function(model) {
   /**
    * @protected
-   * @type {app.model.Setting}
+   * @type {app.model.User}
    */
   this.user = model;
   this.root_ = document.createElement('div');
@@ -50,20 +50,20 @@ app.ui.Setting.prototype.render = function(el) {
 
 
 app.ui.Setting.prototype.onProductChange = function(e) {
-  this.user.setActiveProduct(e.target.value);
+  this.user.setActiveProduct(e.target.value, true);
 };
 
 
 app.ui.Setting.prototype.refresh = function() {
   var span = this.root_.querySelector('span[name=userid]');
-  span.textContent = this.user.userid;
+  span.textContent = this.user.userId;
   var select = this.root_.querySelector('select[name=products]');
   select.innerHTML = '';
   for (var id in sprintly.products) {
     var option = document.createElement('option');
     option.value = id;
     option.textContent = sprintly.products[id].product.name;
-    if (this.user.activeProduct.product.id == id) {
+    if (this.user.activeProductId == id) {
       option.setAttribute('selected', 'true');
     }
     select.appendChild(option);

@@ -11,33 +11,37 @@
 // limitations under the License.
 
 /**
- * @fileOverview Application header.
+ * @fileoverview Application desktop for a sprint.ly product.
  *
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
 
 /**
- * Application header component.
+ * Sprint.ly product workspace.
+ * @param {sprintly.Product} product
  * @constructor
  */
-app.ui.Header = function() {
-  this.setting = new app.ui.Setting(app.model.User.current);
-  this.root_ = document.createElement('div');
+app.Workspace = function(product) {
+  /**
+   * Current product.
+   * @type {sprintly.Product}
+   * @protected
+   */
+  this.product = product;
+
+  /**
+   * @protected
+   * @type {HTMLElement}
+   */
+  this.root = document.createElement('div');
 };
 
 
-app.ui.Header.prototype.render = function(el) {
-  el.appendChild(this.root_);
-  this.setting.render(this.root_);
-};
-
-
-app.ui.Header.prototype.onProductChange = function(e) {
-  console.log(e);
-};
-
-
-app.ui.Header.prototype.refresh = function() {
-
+/**
+ * Render desktop.
+ * @param {Element} el
+ */
+app.Workspace.prototype.render = function(el) {
+  el.appendChild(this.root);
 };

@@ -31,9 +31,11 @@ app.processLogin = function(promise) {
     document.getElementById('page-login').style.display = 'none';
     document.getElementById('desktop').style.display = '';
     var profile = sprintly.service.getProfile();
-    app.model.setting.setUser(profile.username);
-    app.model.items.setProduct(app.model.setting.activeProduct);
-    app.route(location.hash);
+    app.model.User.current.setUser(profile.username, location.search);
+    var id = app.model.User.current.getActiveProduct();
+    if (id) {
+      location.search = id;
+    }
   }, function() {
     document.getElementById('page-login').style.display = '';
     document.getElementById('desktop').style.display = 'none';
@@ -48,33 +50,9 @@ document.getElementById('login').onclick = function(e) {
   app.processLogin(sprintly.login(user, key, remember));
 };
 
-
-// initialize models
-app.model.setting = new app.model.Setting();
-app.model.items = new sprintly.EntityList('items');
-
 // initialize UI
 app.ui.header = new app.ui.Header();
 app.ui.header.render(document.getElementById('setting'));
-
-app.pages = [];
-app.pages.push(new app.ui.page.ItemList(app.model.items));
-for (var i = 0; i < app.pages.length; i++) {
-  app.pages[i].render(document.getElementById('workspace'));
-}
-
-
-/**
- * Switch to a page.
- * @param {string} name page name.
- * @param {string} query query parameter.
- */
-app.switchPage = function(name, query) {
-  for (var i = 0; i < app.pages.length; i++) {
-    var page = app.pages[i];
-    page.setShown(page.name == name, query);
-  }
-};
 
 
 /**
@@ -83,8 +61,7 @@ app.switchPage = function(name, query) {
 app.route = function(hash) {
   var m = hash.match(/^#([^\/]+)\/?(\w+)?/);
   if (m) {
-    console.log(m);
-    app.switchPage(m[1], m[2]);
+
   } else {
     console.log('unknwon hash ' + hash);
     location.hash = 'items'; // go home
