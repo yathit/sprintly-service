@@ -28,11 +28,11 @@
     service.resources['items'] = data;
     var product = new sprintly.Product(service, prod);
 
-    var fooEntity = new sprintly.EntityList('items', 4);
     var db = product.db;
+    db.clear('items');
 
     product.onReady.then(function() {
-      db.clear('items');
+      var fooEntity = new sprintly.EntityList(product, 'items', 4);
       fooEntity.onChanged = function() {
         equal(fooEntity.size(), 4, 'number of data cached');
         var r0 = fooEntity.get(0);
@@ -43,11 +43,10 @@
         db.close();
         QUnit.start();
       };
-      fooEntity.setProduct(product);
     }, function(e) {
       throw e;
     }).catch(function(e) {
-      console.error(e);
+      console.error(e.stack || e);
     });
   });
 

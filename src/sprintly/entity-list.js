@@ -23,12 +23,13 @@
  *
  * Represent spirnt.ly entities, such as, Items, Comments, etc as available in
  * [the sprint.ly API]{@link https://sprintly.uservoice.com/knowledgebase/topics/15784-api}.
- * @param {ydn.db.sync.Entity} entity name
+ * @param {sprintly.Product} product
+ * @param {string} name entity name
  * @param {number=} limit paging limit. Maximum number of entities loaded into memory.
  * @constructor
  * @disposable
  */
-sprintly.EntityList = function(entity, limit) {
+sprintly.EntityList = function(product, name, limit) {
 
   /**
    * @final
@@ -52,8 +53,10 @@ sprintly.EntityList = function(entity, limit) {
    * @protected
    * @type {sprintly.Product}
    */
-  this.product = null;
+  this.product = product;
 
+  var entity = product.getEntityByName(name);
+  console.assert(entity, 'Entity ' + name + ' not found');
   /**
    * @protected
    * @type {ydn.db.sync.Entity}
@@ -62,10 +65,10 @@ sprintly.EntityList = function(entity, limit) {
 
   /**
    * Entity update listener key.
-   * @type {null}
+   * @type {string}
    * @private
    */
-  this.listenerKey_ = null;
+  this.listenerKey_ = this.entity.listen('update', this.checkUpdated_, false, this);
 
   /**
    * List of on-memory cached records.
@@ -80,6 +83,8 @@ sprintly.EntityList = function(entity, limit) {
    * @private
    */
   this.lastUpdateCheck_ = 0;
+
+  this.entity.update().done(this.checkUpdated_, this);
 };
 
 
@@ -103,24 +108,6 @@ sprintly.EntityList.prototype.get = function(idx) {
 
 
 /**
- * Set target product.
- * This will initiate updating entity.
- * @param {sprintly.Product} product
- */
-sprintly.EntityList.prototype.setProduct = function(product) {
-  if (this.product) {
-    this.product.unlisten(this.listenerKey_);
-  }
-  this.product = product;
-  this.listenerKey_ = this.product.listen(this.onUpdate_, this);
-  this.entity = new ydn.db.sync.Entity(this.product, this.name, this.product.db);
-  this.entity.update().done(function() {
-    this.checkUpdated_();
-  }, this);
-};
-
-
-/**
  * Change event trigger check refractory period.
  * @type {number}
  */
@@ -134,9 +121,10 @@ sprintly.EntityList.prototype.refractoryPeriod = 500;
 sprintly.EntityList.prototype.checkUpdated_ = function() {
   this.product.db.values(this.name, null, this.limit, this.offset).done(function(objs) {
     this.lastUpdateCheck_ = new Date().getTime();
-    if (objs.length == 0) {
-
-    } else if (objs.length != this.records.length ||
+    if (objs.length == 0 && this.records.length == 0) {
+      return;
+    }
+    if (objs.length != this.records.length ||
         objs[0].id != this.records[0].id ||
         objs[objs.length - 1].id != this.records[objs.length - 1].id) {
       this.records = objs;
@@ -152,7 +140,7 @@ sprintly.EntityList.prototype.checkUpdated_ = function() {
  * @private
  */
 sprintly.EntityList.prototype.onUpdate_ = function(obj) {
-  if (obj.entity == this.name && (this.lastUpdateCheck_ - new Date().getTime()) < this.refractoryPeriod) {
+  if (this.lastUpdateCheck_ - new Date().getTime() < this.refractoryPeriod) {
     this.checkUpdated_();
   }
 };
@@ -168,8 +156,8 @@ sprintly.EntityList.prototype.onChanged = function() {};
  * Dispose this object by releasing resources.
  */
 sprintly.EntityList.prototype.dispose = function() {
-  if (this.product) {
-    this.product.unlisten(this.listenerKey_);
+  if (this.entity) {
+    this.entity.unlistenByKey(this.listenerKey_);
     this.entity = null;
     this.product = null;
   }

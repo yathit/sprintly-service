@@ -67,7 +67,7 @@ sprintly.Product = function(service, product) {
   var me = this;
   /**
    * Resolve on Product entities are ready.
-   * @type {Promise} resolve with `this` and reject with database Error.
+   * @type {Promise} resolve with void and reject with database Error.
    */
   this.onReady = new Promise(function(resolve, reject) {
     me.db.onReady(function(e) {
@@ -82,7 +82,10 @@ sprintly.Product = function(service, product) {
          * @final
          */
         this.Comment = new ydn.db.sync.Entity(this, sprintly.Entity.COMMENT, this.db);
-        resolve(this);
+
+        setTimeout(function() {
+          resolve(); // let db to execute
+        }, 4);
       }
     }, me);
   });
