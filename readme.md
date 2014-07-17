@@ -13,7 +13,7 @@ Documentation
 
 See generated [API documentation](http://dev.yathit.com/sprintly/api-doc/index.html).
 
-[sprint.ly offline app](http://yathit.github.io/sprintly-service/sprintly-offline-app.html)
+Check out [sprint.ly offline app](http://yathit.github.io/sprintly-service/sprintly-offline-app.html)
 
 Use [playground web page](http://yathit.github.io/sprintly-service/playground.html) to try out the following Getting Started tutorial.
 
