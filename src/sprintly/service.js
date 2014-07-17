@@ -102,9 +102,18 @@ sprintly.Service.prototype.request = function(options) {
     }
     xhr = null;
     options.callback(json, raw);
+    me.onNetwork({
+      type: 'received',
+      request: options,
+      json: json,
+      respond: raw
+    });
   };
   xhr.send(options.body);
-
+  this.onNetwork({
+    type: 'send',
+    request: options
+  });
 };
 
 
@@ -144,6 +153,13 @@ sprintly.Service.prototype.login = function(user, password) {
   });
 
 };
+
+
+/**
+ * Handle on network events.
+ * @param {Object} ev network event.
+ */
+sprintly.Service.prototype.onNetwork = function(ev) {};
 
 
 /**

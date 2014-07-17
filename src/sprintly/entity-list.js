@@ -58,7 +58,7 @@ sprintly.EntityList = function(product, name, limit) {
   var entity = product.getEntityByName(name);
   console.assert(entity, 'Entity ' + name + ' not found');
   /**
-   * @protected
+   * @final
    * @type {ydn.db.sync.Entity}
    */
   this.entity = entity;
@@ -128,6 +128,7 @@ sprintly.EntityList.prototype.checkUpdated_ = function() {
         objs[0].id != this.records[0].id ||
         objs[objs.length - 1].id != this.records[objs.length - 1].id) {
       this.records = objs;
+      console.log(this + ' updated');
       this.onChanged();
     }
   }, this);
@@ -161,5 +162,11 @@ sprintly.EntityList.prototype.dispose = function() {
     this.entity = null;
     this.product = null;
   }
+};
+
+
+
+sprintly.EntityList.prototype.toString = function() {
+  return 'EntityList:' + this.name + ' ' + this.records.length;
 };
 

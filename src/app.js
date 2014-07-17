@@ -20,7 +20,20 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
-
+app.loadWorkspace = function() {
+  var id = app.model.User.current.getActiveProduct();
+  if (id) {
+    if (!location.search) {
+      location.search = id;
+    } else {
+      /**
+       * @type {app.Workspace}
+       */
+      app.workspace = new app.Workspace(sprintly.products[id]);
+      app.workspace.render(document.getElementById('workspace'));
+    }
+  }
+};
 
 /**
  * Process after login.
@@ -32,12 +45,9 @@ app.processLogin = function(promise) {
     document.getElementById('desktop').style.display = '';
     var profile = sprintly.service.getProfile();
     app.model.User.current.setUser(profile.username);
-    if (!location.search) {
-      var id = app.model.User.current.getActiveProduct();
-      if (id) {
-        location.search = id;
-      }
-    }
+    setTimeout(function() {
+      app.loadWorkspace();
+    }, 4);
   }, function() {
     document.getElementById('page-login').style.display = '';
     document.getElementById('desktop').style.display = 'none';
@@ -55,29 +65,6 @@ document.getElementById('login').onclick = function(e) {
 // initialize UI
 app.ui.header = new app.ui.Header();
 app.ui.header.render(document.getElementById('setting'));
-
-/**
- * @type {app.Workspace}
- */
-app.workspace = new app.Workspace();
-
-/**
- * @param {string} hash
- */
-app.route = function(hash) {
-  var m = hash.match(/^#([^\/]+)\/?(\w+)?/);
-  if (m) {
-
-  } else {
-    console.log('unknwon hash ' + hash);
-    location.hash = 'items'; // go home
-  }
-};
-
-
-window.addEventListener('hashchange', function(e) {
-  app.route(location.hash);
-});
 
 window.addEventListener('active-product', function(e) {
   var id = e.detail.activeProductId;

@@ -40,3 +40,26 @@ footer {
 #desktop {
     clear: both;
 }
+
+.toolbar {
+    background-color: #d3d3d3;
+    border: thin solid darkgray;
+    padding: 4px;
+}
+
+.toolbar > * {
+    padding: 4px;
+}
+
+.item-list ul {
+    padding-left: 4px;
+    list-style: none;
+}
+
+.item-list li > * {
+    padding: 0 4px;
+}
+
+.traffic .send {
+    background-color: lightgreen;
+}

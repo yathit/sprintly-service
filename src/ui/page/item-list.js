@@ -30,27 +30,65 @@ app.ui.page.ItemList = function(model) {
   this.model = model;
   this.root_ = document.createElement('div');
   this.root_.style.display = 'none';
+  this.head_ = document.createElement('div');
+  this.content_ = document.createElement('div');
+  this.root_.appendChild(this.head_);
+  this.root_.appendChild(this.content_);
+  this.head_.textContent = 'Item list page';
 
   /**
    * @final
    * @type {string}
    */
-  this.name = 'page-items-list';
+  this.name = 'items';
+
+  this.root_.className = 'item-list ' + this.name;
+
+};
+
+
+/**
+ * @returns {sprintly.EntityList}
+ */
+app.ui.page.ItemList.prototype.getModel = function() {
+  return this.model;
 };
 
 
 app.ui.page.ItemList.prototype.render = function(el) {
   el.appendChild(this.root_);
-  var head = document.createElement('div');
-  head.textContent = 'Item list page';
-  this.root_.appendChild(head);
 
-  this.model.onChange = this.onModelChanged.bind(this);
+  this.refresh();
+  this.model.onChanged = this.onModelChanged.bind(this);
 };
 
 
 app.ui.page.ItemList.prototype.onModelChanged = function(cnt) {
-  console.log(cnt);
+  this.refresh();
+};
+
+
+app.ui.page.ItemList.prototype.refresh = function() {
+  this.content_.innerHTML = '';
+  var ul = document.createElement('ul');
+  var n = this.model.size();
+  console.log(this + ' refresh ' + n + ' items');
+  for (var i = 0; i < n; i++) {
+    var item = this.model.get(i);
+    var li = document.createElement('li');
+    var no = document.createElement('a');
+    no.textContent = item.number;
+    no.href = item.short_url;
+    var status = document.createElement('span');
+    status.textContent = item.status;
+    var description = document.createElement('span');
+    description.textContent = item.description;
+    li.appendChild(no);
+    li.appendChild(status);
+    li.appendChild(description);
+    ul.appendChild(li);
+  }
+  this.content_.appendChild(ul);
 };
 
 
@@ -61,6 +99,16 @@ app.ui.page.ItemList.prototype.onModelChanged = function(cnt) {
  */
 app.ui.page.ItemList.prototype.setShown = function(val, query) {
   this.root_.style.display = val ? '' : 'none';
+  if (val) {
+    this.model.entity.update().always(function(cnt) {
+      this.refresh();
+    }, this)
+  }
+};
+
+
+app.ui.page.ItemList.prototype.toString = function() {
+  return 'ItemListPage';
 };
 
 

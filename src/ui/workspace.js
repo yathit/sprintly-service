@@ -21,19 +21,26 @@
  * Sprint.ly product workspace.
  * @constructor
  */
-app.Workspace = function() {
+app.Workspace = function(product) {
   /**
    * Current product.
    * @type {sprintly.Product}
    * @protected
    */
-  this.product = null;
+  this.product = product;
 
   /**
    * @protected
    * @type {HTMLElement}
    */
   this.root = document.createElement('div');
+
+  this.toolbar = new app.ui.Toolbar();
+
+  this.itemListPage = new app.ui.page.ItemList(new sprintly.EntityList(product, 'items'));
+
+  this.pages = [this.itemListPage];
+
 };
 
 
@@ -43,4 +50,52 @@ app.Workspace = function() {
  */
 app.Workspace.prototype.render = function(el) {
   el.appendChild(this.root);
+  this.toolbar.render(this.root);
+  this.itemListPage.render(this.root);
+
+  var me = this;
+  window.addEventListener('hashchange', function(e) {
+    me.route(location.hash);
+  });
+
+  this.route(location.hash);
 };
+
+
+
+/**
+ * Switch to a page.
+ * @param {string} name page name.
+ * @param {string} query query parameter.
+ * @return {boolean}
+ */
+app.Workspace.prototype.switchPage = function(name, query) {
+  var ok = false;
+  for (var i = 0; i < this.pages.length; i++) {
+    var page = this.pages[i];
+    var show = page.name == name;
+    if (show) {
+      ok = true;
+    }
+    page.setShown(show, query);
+  }
+  return ok;
+};
+
+
+/**
+ * @param {string} hash
+ */
+app.Workspace.prototype.route = function(hash) {
+  var m = hash.match(/^#([^\/]+)\/?(\w+)?/);
+  if (m) {
+    var ok = this.switchPage(m[1], m[2]);
+    if (!ok) {
+      location.hash = 'items'; // go home
+    }
+  } else {
+    console.log('unknwon hash ' + hash);
+    location.hash = 'items'; // go home
+  }
+};
+
