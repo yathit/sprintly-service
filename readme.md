@@ -17,6 +17,8 @@ Check out [sprint.ly offline app](http://yathit.github.io/sprintly-service/sprin
 
 Use [playground web page](http://yathit.github.io/sprintly-service/playground.html) to try out the following Getting Started tutorial.
 
+Unit tests: [basic](http://yathit.github.io/sprintly-service/test/test_basic.html), [entity-list](http://yathit.github.io/sprintly-service/test/entity-list-test.html), [api-test](http://yathit.github.io/sprintly-service/test/api-test.html)
+
 Getting started
 ===============
 
