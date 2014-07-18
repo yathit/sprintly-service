@@ -68,7 +68,8 @@ sprintly.EntityList = function(product, name, limit) {
    * @type {string}
    * @private
    */
-  this.listenerKey_ = this.entity.listen('update', this.checkUpdated_, false, this);
+  this.listenerKey_ = this.entity.listen('change', this.checkUpdated_, false, this);
+  this.listenerKey_ = this.entity.listen('updated', this.checkUpdated_, false, this);
 
   /**
    * List of on-memory cached records.

@@ -35,6 +35,10 @@ app.ui.Setting = function(model) {
 
 app.ui.Setting.prototype.render = function(el) {
   el.appendChild(this.root_);
+
+  var tf = new app.ui.HttpTrafficPanel();
+  tf.render(this.root_);
+
   var sp = document.createElement('select');
   sp.setAttribute('name', 'products');
   this.root_.appendChild(sp);
@@ -47,31 +51,8 @@ app.ui.Setting.prototype.render = function(el) {
 
   this.user.onChanged = this.refresh.bind(this);
 
-  this.renderHttpTraffic();
 };
 
-
-app.ui.Setting.prototype.renderHttpTraffic = function() {
-  var tf = document.createElement('span');
-  tf.className = 'traffic';
-  var el = document.createElement('span');
-  tf.appendChild(el);
-  sprintly.service.onNetwork = function(ev) {
-    el.textContent = ev.type;
-    if (ev.type == 'send') {
-      el.className = 'send';
-      el.setAttribute('title', ev.request.method + ' ' + ev.request.path);
-    } else {
-      el.className = 'receive';
-      var msg = ev.respond.statusText;
-      if (ev.json && ev.json.length > 0) {
-        msg = ' ' + ev.json.length + ' entries';
-      }
-      el.setAttribute('title', ev.respond.status + ' ' + msg);
-    }
-  };
-  this.root_.insertBefore(tf, this.root_.firstElementChild);
-};
 
 
 app.ui.Setting.prototype.onProductChange = function(e) {

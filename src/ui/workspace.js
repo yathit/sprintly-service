@@ -37,9 +37,12 @@ app.Workspace = function(product) {
 
   this.toolbar = new app.ui.Toolbar();
 
-  this.itemListPage = new app.ui.page.ItemList(new sprintly.EntityList(product, 'items'));
+  var item = new sprintly.EntityList(product, sprintly.Entity.ITEM);
+  this.itemListPage = new app.ui.page.ItemList(item);
+  var people = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
+  var p2 = new app.ui.page.ItemList(people);
 
-  this.pages = [this.itemListPage];
+  this.pages = [this.itemListPage, p2];
 
 };
 

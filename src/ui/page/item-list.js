@@ -40,7 +40,7 @@ app.ui.page.ItemList = function(model) {
    * @final
    * @type {string}
    */
-  this.name = 'items';
+  this.name = model.name;
 
   this.root_.className = 'item-list ' + this.name;
 

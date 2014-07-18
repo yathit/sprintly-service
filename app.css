@@ -60,6 +60,24 @@ footer {
     padding: 0 4px;
 }
 
-.traffic .send {
+.traffic {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    margin: 0;
+    padding: 0 1px;
+}
+
+.traffic.send {
+    background-color: lightblue;
+}
+
+.traffic.receive {
+    transition: background-color 0.5s ease;
     background-color: lightgreen;
+}
+
+.traffic.error {
+    transition: background-color 0.5s ease;
+    background-color: red;
 }

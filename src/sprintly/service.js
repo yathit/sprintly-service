@@ -33,9 +33,9 @@ sprintly.Service = function(baseUrl) {
 
 
 /**
- * @define {string} sprint.ly backend base URL.
+ * @define {string} sprint.ly default backend base URL.
  */
-sprintly.Service.BASE_URL = 'https://sprint.ly/api/';
+sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
 
 
 /**
@@ -103,7 +103,8 @@ sprintly.Service.prototype.request = function(options) {
     xhr = null;
     options.callback(json, raw);
     me.onNetwork({
-      type: 'received',
+      type: 'receive',
+      url: url,
       request: options,
       json: json,
       respond: raw
@@ -112,6 +113,7 @@ sprintly.Service.prototype.request = function(options) {
   xhr.send(options.body);
   this.onNetwork({
     type: 'send',
+    url: url,
     request: options
   });
 };

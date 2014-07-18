@@ -30,7 +30,8 @@ app.ui.Toolbar = function() {
 
 app.ui.Toolbar.prototype.render = function(el) {
   var items = {
-    'items': {label: 'Items'}
+    'items': {label: 'Items'},
+    'people': {label: 'People'}
   };
   for (var item in items) {
     var a = document.createElement('a');

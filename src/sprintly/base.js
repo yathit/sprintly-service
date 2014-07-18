@@ -13,6 +13,7 @@ sprintly = {};
  */
 sprintly.Entity = {
   ITEM: 'items',
+  PEOPLE: 'people',
   COMMENT: 'comments'
 };
 

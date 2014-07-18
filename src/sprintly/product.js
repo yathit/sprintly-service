@@ -81,7 +81,7 @@ sprintly.Product = function(service, product) {
         /**
          * @final
          */
-        this.Comment = new ydn.db.sync.Entity(this, sprintly.Entity.COMMENT, this.db);
+        this.People = new ydn.db.sync.Entity(this, sprintly.Entity.PEOPLE, this.db);
 
         setTimeout(function() {
           resolve(); // let db to execute
@@ -101,8 +101,8 @@ sprintly.Product = function(service, product) {
 sprintly.Product.prototype.getEntityByName = function(name) {
   if (name == sprintly.Entity.ITEM) {
     return this.Item;
-  } else if (name == sprintly.Entity.COMMENT) {
-    return this.Comment;
+  } else if (name == sprintly.Entity.PEOPLE) {
+    return this.People;
   }
 };
 
@@ -216,7 +216,7 @@ sprintly.Product.prototype.hibernatePeriod = 1 * 60 * 60 * 1000;
 
 /**
  * List collection.
- * @param {function(number, Array.<!Object>, Object} callback return nullable paging token and
+ * @param {function(number, Array.<!Object>, Object)} callback return nullable paging token and
  * list of entities. If paging token is not `null`, list method will be invoke again with given paging token.
  * @param {string} name entity name
  * @param {Object} params query parameter.
@@ -226,7 +226,9 @@ sprintly.Product.prototype.list_ = function(callback, name, params) {
   var me = this;
   this.request(function(json, raw) {
     if (raw.status == 200) { // OK
-      if (json && json.length > 0) {
+      if (name == 'people') {
+        params = null; // no offset
+      } else if (json && json.length > 0) {
         if (!params) {
           params = {};
         }
@@ -337,6 +339,13 @@ sprintly.Product.schema = {
       name: 'last_modified'
     }, {
       name: 'type'
+    }]
+  }, {
+    name: 'people',
+    keyPath: 'number',
+    autoIncrement: true,
+    indexes: [{
+      name: 'last_modified'
     }]
   }]
 };
