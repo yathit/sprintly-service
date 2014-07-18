@@ -20,9 +20,15 @@
 /**
  * Application header component.
  * @param {sprintly.EntityList} model
+ * @param {app.ui.page.EntityRenderer} renderer
  * @constructor
  */
-app.ui.page.ItemList = function(model) {
+app.ui.page.ItemList = function(model, renderer) {
+  /**
+   * @protected
+   * @type {app.ui.page.EntityRenderer}
+   */
+  this.renderer = renderer;
   /**
    * @protected
    * @type {sprintly.EntityList}
@@ -76,16 +82,8 @@ app.ui.page.ItemList.prototype.refresh = function() {
   for (var i = 0; i < n; i++) {
     var item = this.model.get(i);
     var li = document.createElement('li');
-    var no = document.createElement('a');
-    no.textContent = item.number;
-    no.href = item.short_url;
-    var status = document.createElement('span');
-    status.textContent = item.status;
-    var description = document.createElement('span');
-    description.textContent = item.description;
-    li.appendChild(no);
-    li.appendChild(status);
-    li.appendChild(description);
+    var div = this.renderer.render(item);
+    li.appendChild(div);
     ul.appendChild(li);
   }
   this.content_.appendChild(ul);
@@ -108,7 +106,7 @@ app.ui.page.ItemList.prototype.setShown = function(val, query) {
 
 
 app.ui.page.ItemList.prototype.toString = function() {
-  return 'ItemListPage';
+  return 'ItemListPage:' + this.name;
 };
 
 

@@ -4,6 +4,7 @@
   },
   "plugins": ["plugins/markdown"],
   "source": {
+    "exclude": ["src/sprintly/event-target.js"],
     "excludePattern": "src/(ui|model)/*"
   },
   "templates": {

@@ -38,9 +38,9 @@ app.Workspace = function(product) {
   this.toolbar = new app.ui.Toolbar();
 
   var item = new sprintly.EntityList(product, sprintly.Entity.ITEM);
-  this.itemListPage = new app.ui.page.ItemList(item);
+  this.itemListPage = new app.ui.page.ItemList(item, new app.ui.page.ItemRenderer());
   var people = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
-  var p2 = new app.ui.page.ItemList(people);
+  var p2 = new app.ui.page.ItemList(people, new app.ui.page.PeopleRenderer());
 
   this.pages = [this.itemListPage, p2];
 
@@ -54,7 +54,10 @@ app.Workspace = function(product) {
 app.Workspace.prototype.render = function(el) {
   el.appendChild(this.root);
   this.toolbar.render(this.root);
-  this.itemListPage.render(this.root);
+  for (var i = 0; i < this.pages.length; i++) {
+    this.pages[i].render(this.root);
+  }
+
 
   var me = this;
   window.addEventListener('hashchange', function(e) {

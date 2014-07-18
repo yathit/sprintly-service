@@ -102,6 +102,10 @@ Sprintly.People.prototype.id;
  */
 Sprintly.People.prototype.email;
 
+/**
+ * @type {number}
+ */
+Sprintly.People.prototype.number;
 
 
 /**
@@ -175,6 +179,9 @@ Sprintly.Item.prototype.assigned_to;
  */
 Sprintly.Item.prototype.description;
 
-
+/**
+ * @type {string}
+ */
+Sprintly.Item.prototype.short_url;
 
 
