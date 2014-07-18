@@ -70,10 +70,27 @@ Sprintly.Progress.prototype.closed_at;
 Sprintly.Progress.prototype.closed_at;
 
 
+/**
+ * Base sprintly entity
+ * @interface
+ */
+Sprintly.Entity = function() {};
+
+/**
+ * @type {number}
+ */
+Sprintly.Entity.prototype.id;
+
+/**
+ * @type {number}
+ */
+Sprintly.Entity.prototype.number;
+
 
 /**
  * https://sprintly.uservoice.com/knowledgebase/articles/98410-people
  * @interface
+ * @extends {Sprintly.Entity}
  */
 Sprintly.People = function() {};
 
@@ -93,24 +110,16 @@ Sprintly.People.prototype.first_name;
 Sprintly.People.prototype.last_name;
 
 /**
- * @type {number}
- */
-Sprintly.People.prototype.id;
-
-/**
  * @type {string}
  */
 Sprintly.People.prototype.email;
 
-/**
- * @type {number}
- */
-Sprintly.People.prototype.number;
 
 
 /**
  * https://sprintly.uservoice.com/knowledgebase/articles/98412-items
  * @interface
+ * @extends {Sprintly.Entity}
  */
 Sprintly.Item = function() {};
 
@@ -143,11 +152,6 @@ Sprintly.Item.prototype.description;
  * @type {Array.<string>}
  */
 Sprintly.Item.prototype.tags;
-
-/**
- * @type {number}
- */
-Sprintly.Item.prototype.number;
 
 /**
  * @type {boolean}

@@ -18,15 +18,15 @@
 
 
 /**
- * Application header component.
+ * Application entity list component.
  * @param {sprintly.EntityList} model
- * @param {app.ui.page.EntityRenderer} renderer
+ * @param {app.ui.page.ItemListRenderer} renderer
  * @constructor
  */
-app.ui.page.ItemList = function(model, renderer) {
+app.ui.page.EntityList = function(model, renderer) {
   /**
    * @protected
-   * @type {app.ui.page.EntityRenderer}
+   * @type {app.ui.page.ItemListRenderer}
    */
   this.renderer = renderer;
   /**
@@ -56,12 +56,12 @@ app.ui.page.ItemList = function(model, renderer) {
 /**
  * @returns {sprintly.EntityList}
  */
-app.ui.page.ItemList.prototype.getModel = function() {
+app.ui.page.EntityList.prototype.getModel = function() {
   return this.model;
 };
 
 
-app.ui.page.ItemList.prototype.render = function(el) {
+app.ui.page.EntityList.prototype.render = function(el) {
   el.appendChild(this.root_);
 
   this.refresh();
@@ -69,12 +69,12 @@ app.ui.page.ItemList.prototype.render = function(el) {
 };
 
 
-app.ui.page.ItemList.prototype.onModelChanged = function(cnt) {
+app.ui.page.EntityList.prototype.onModelChanged = function(cnt) {
   this.refresh();
 };
 
 
-app.ui.page.ItemList.prototype.refresh = function() {
+app.ui.page.EntityList.prototype.refresh = function() {
   this.content_.innerHTML = '';
   var ul = document.createElement('ul');
   var n = this.model.size();
@@ -95,7 +95,7 @@ app.ui.page.ItemList.prototype.refresh = function() {
  * @param {boolean} val
  * @param {string=} query query parameter.
  */
-app.ui.page.ItemList.prototype.setShown = function(val, query) {
+app.ui.page.EntityList.prototype.setShown = function(val, query) {
   this.root_.style.display = val ? '' : 'none';
   if (val) {
     this.model.entity.update().always(function(cnt) {
@@ -105,7 +105,7 @@ app.ui.page.ItemList.prototype.setShown = function(val, query) {
 };
 
 
-app.ui.page.ItemList.prototype.toString = function() {
+app.ui.page.EntityList.prototype.toString = function() {
   return 'ItemListPage:' + this.name;
 };
 

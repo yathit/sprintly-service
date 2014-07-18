@@ -42,7 +42,7 @@ app.ui.page.PeopleRenderer.prototype.render = function(item) {
   var div = document.createElement('div');
   var no = document.createElement('a');
   no.textContent = item.number;
-  no.href = 'items@member=' + item.number;
+  no.href = '#people/' + item.number;
   var description = document.createElement('span');
   description.textContent = item.first_name + ' ' + item.last_name;
   div.appendChild(no);
