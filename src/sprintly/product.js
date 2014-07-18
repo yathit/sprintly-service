@@ -37,32 +37,20 @@ sprintly.Product = function(service, product) {
 
   /**
    * @final
-   * @type {sprintly.Service}
+   * @type {sprintly.Service} sprint.ly service provider.
    */
   this.service = service;
 
   /**
    * @final
-   * @type {Sprintly.Product}
+   * @type {Sprintly.Product} target product.
    */
   this.product = product;
 
   /**
-   * @type {ydn.db.Storage}
+   * @type {ydn.db.Storage} local data source.
    */
   this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
-
-  /**
-   * Item entity.
-   * @type {ydn.db.sync.Entity}
-   */
-  this.Item;
-
-  /**
-   * Item entity.
-   * @type {ydn.db.sync.Entity}
-   */
-  this.Comment;
 
   var me = this;
   /**
@@ -75,10 +63,14 @@ sprintly.Product = function(service, product) {
         reject(e);
       } else {
         /**
+         * Item entity.
+         * @type {ydn.db.sync.Entity}
          * @final
          */
         this.Item = new ydn.db.sync.Entity(this, sprintly.Entity.ITEM, this.db);
         /**
+         * Item entity.
+         * @type {ydn.db.sync.Entity}
          * @final
          */
         this.People = new ydn.db.sync.Entity(this, sprintly.Entity.PEOPLE, this.db);
@@ -96,7 +88,8 @@ sprintly.Product = function(service, product) {
 /**
  * Get sprint.ly entity by name.
  * @param {sprintly.Entity} name
- * @returns {ydn.db.sync.Entity}
+ * @returns {ydn.db.sync.Entity} YDN-DB sync entity
+ * {@link http://dev.yathit.com/api-reference/ydn-db/sync/entity.html}
  */
 sprintly.Product.prototype.getEntityByName = function(name) {
   if (name == sprintly.Entity.ITEM) {
