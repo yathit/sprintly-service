@@ -1,0 +1,29 @@
+CACHE MANIFEST
+# Jul 20, 2014
+sprintly-offline-app.html
+app.css
+lib/ydn.db-core-sync.js
+src/base.js
+src/sprintly/base.js
+src/sprintly/service.js
+src/sprintly/product.js
+src/sprintly/entity-list.js
+src/sprintly/loader.js
+src/base.js
+src/model/user.js
+src/model/entity.js
+src/sprintly/entity-list.js
+src/ui/header.js
+src/ui/http-traffic-panel.js
+src/ui/setting.js
+src/ui/toolbar.js
+src/ui/page/doc.js
+src/ui/page/entity-renderer.js
+src/ui/page/entity-list-renderer.js
+src/ui/page/entity.js
+src/ui/page/entity-list.js
+src/ui/workspace.js
+
+
+NETWORK:
+*
