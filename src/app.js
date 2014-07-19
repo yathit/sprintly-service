@@ -43,6 +43,7 @@ app.processLogin = function(promise) {
   promise.then(function() {
     document.getElementById('page-login').style.display = 'none';
     document.getElementById('desktop').style.display = '';
+    document.getElementById('setting').style.display = '';
     var profile = sprintly.service.getProfile();
     app.model.User.current.setUser(profile.username);
     setTimeout(function() {
