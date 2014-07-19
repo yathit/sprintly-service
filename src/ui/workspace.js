@@ -38,11 +38,13 @@ app.Workspace = function(product) {
   this.toolbar = new app.ui.Toolbar();
 
   var item = new app.model.Entity(product.Item);
+  var people = new app.model.Entity(product.People);
   var itemList = new sprintly.EntityList(product, sprintly.Entity.ITEM);
   var peopleList = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
 
   this.pages = [
     new app.ui.page.Entity(item, new app.ui.page.ItemRenderer()),
+    new app.ui.page.Entity(people, new app.ui.page.PeopleRenderer()),
     new app.ui.page.EntityList(itemList, new app.ui.page.ItemListRenderer()),
     new app.ui.page.EntityList(peopleList, new app.ui.page.PeopleListRenderer())
   ];

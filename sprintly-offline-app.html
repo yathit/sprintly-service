@@ -15,21 +15,95 @@
   <script src="src/model/user.js"></script>
   <script src="src/model/entity.js"></script>
   <script src="src/sprintly/entity-list.js"></script>
-  <script src="src/ui/header.js"></script>
-  <script src="src/ui/http-traffic-panel.js"></script>
-  <script src="src/ui/setting.js"></script>
-  <script src="src/ui/toolbar.js"></script>
-  <script src="src/ui/page/entity-renderer.js"></script>
-  <script src="src/ui/page/entity-list-renderer.js"></script>
-  <script src="src/ui/page/item-renderer.js"></script>
-  <script src="src/ui/page/item-list-renderer.js"></script>
-  <script src="src/ui/page/people-list-renderer.js"></script>
-  <script src="src/ui/page/entity.js"></script>
-  <script src="src/ui/page/entity-list.js"></script>
-  <script src="src/ui/workspace.js"></script>
+
 </head>
 <body>
-  <header>
+
+<template id="item-detail-template">
+  <style>
+    .item-detail {
+      padding: 8px;
+    }
+    .score {
+      display: inline-block;
+      background-color: lightblue;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      text-align: center;
+      vertical-align:middle;
+    }
+  </style>
+  <div class="item-detail">
+    <nav>
+      <span class="score" title="ticket sizing"></span>
+      <span class="assigned" title="assigned to"></span>
+    </nav>
+    <article>
+      <div class="header">
+        <span class="title"></span>
+      </div>
+      <div class="description"></div>
+    </article>
+  </div>
+</template>
+
+<template id="people-detail-template">
+  <style>
+    .people-detail {
+      padding: 8px;
+    }
+
+  </style>
+  <div class="people-detail">
+    <div>
+      Id: <span class="number"></span>
+    </div>
+    <div>
+      <span class="first"></span>
+      <span class="last"></span>
+    </div>
+  </div>
+</template>
+
+<template id="item-list-template">
+  <style>
+    .item > * {
+      padding: 0 4px;
+    }
+  </style>
+  <div class="item">
+    <a name="no"></a>
+    <span class="status"></span>
+    <span class="title"></span>
+  </div>
+</template>
+
+<template id="people-list-template">
+  <style>
+    .people > * {
+      padding: 0 4px;
+    }
+  </style>
+  <div class="people">
+    <a name="id"></a>
+    <span class="first"></span>
+    <span class="last"></span>
+  </div>
+</template>
+
+<script src="src/ui/header.js"></script>
+<script src="src/ui/http-traffic-panel.js"></script>
+<script src="src/ui/setting.js"></script>
+<script src="src/ui/toolbar.js"></script>
+<script src="src/ui/page/entity-renderer.js"></script>
+<script src="src/ui/page/entity-list-renderer.js"></script>
+<script src="src/ui/page/entity.js"></script>
+<script src="src/ui/page/entity-list.js"></script>
+<script src="src/ui/workspace.js"></script>
+
+
+<header>
     <div class="left">Yathit Offline App for Sprint.ly</div>   <div class="right" id="setting"></div>
   </header>
 

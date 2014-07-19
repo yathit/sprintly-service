@@ -21,9 +21,7 @@
  * Entity renderer.
  * @interface
  */
-app.ui.page.EntityRenderer = function() {
-
-};
+app.ui.page.EntityRenderer = function() {};
 
 
 /**
@@ -31,7 +29,80 @@ app.ui.page.EntityRenderer = function() {
  * @param {app.model.Entity} model model.
  * @param {HTMLElement} el Element to be rendered on.
  */
-app.ui.page.EntityRenderer.prototype.render = function(model, el) {
+app.ui.page.EntityRenderer.prototype.render = function(model, el) {};
+
+
+
+/**
+ * Item entity renderer.
+ * @constructor
+ * @implements {app.ui.page.EntityRenderer}
+ */
+app.ui.page.ItemRenderer = function() {
 
 };
 
+
+app.ui.page.ItemRenderer.prototype.template = document.getElementById('item-detail-template');
+
+
+/**
+ * Render model.
+ * @param {app.model.Entity} item
+ * @param {HTMLElement} div element to be rendered on.
+ */
+app.ui.page.ItemRenderer.prototype.render = function(item, div) {
+  div.innerHTML = '';
+  /**
+   * @type {Sprintly.Item}
+   */
+  var data = item.data;
+  if (data) {
+    console.log(data);
+    var content = this.template.content.cloneNode(true);
+    content.querySelector('.score').textContent = data.score;
+    content.querySelector('.assigned').textContent = data.assigned_to ?
+        data.assigned_to.first_name : 'unassigned';
+    content.querySelector('.title').textContent = data.title;
+    content.querySelector('.description').textContent = data.description;
+    div.appendChild(content);
+
+  }
+};
+
+
+
+/**
+ * Item entity renderer.
+ * @constructor
+ * @implements {app.ui.page.EntityRenderer}
+ */
+app.ui.page.PeopleRenderer = function() {
+
+};
+
+
+app.ui.page.PeopleRenderer.prototype.template = document.getElementById('people-detail-template');
+
+
+/**
+ * Render model.
+ * @param {app.model.Entity} item
+ * @param {HTMLElement} div element to be rendered on.
+ */
+app.ui.page.PeopleRenderer.prototype.render = function(item, div) {
+  div.innerHTML = '';
+  /**
+   * @type {Sprintly.People}
+   */
+  var data = item.data;
+  if (data) {
+    console.log(data);
+    var content = this.template.content.cloneNode(true);
+    content.querySelector('.number').textContent = data.id;
+    content.querySelector('.first').textContent = data.first_name;
+    content.querySelector('.last').textContent = data.last_name;
+    div.appendChild(content);
+
+  }
+};

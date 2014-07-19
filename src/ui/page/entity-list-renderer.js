@@ -35,3 +35,62 @@ app.ui.page.EntityListRenderer.prototype.render = function(model, el) {
 
 };
 
+
+
+/**
+ * Item entity renderer.
+ * @constructor
+ * @implements {app.ui.page.EntityListRenderer}
+ */
+app.ui.page.ItemListRenderer = function() {
+
+};
+
+
+app.ui.page.ItemListRenderer.prototype.template = document.getElementById('item-list-template');
+
+
+/**
+ * Render model.
+ * @param {Sprintly.Item} item
+ * @param {HTMLElement} div element to be rendered on.
+ */
+app.ui.page.ItemListRenderer.prototype.render = function(item, div) {
+  var content = this.template.content.cloneNode(true);
+  var id = content.querySelector('a');
+  id.href = '#items/' + item.number;
+  id.textContent = item.number;
+  content.querySelector('.status').textContent = item.status;
+  content.querySelector('.title').textContent = item.title;
+  div.appendChild(content);
+};
+
+
+
+/**
+ * Item entity renderer.
+ * @constructor
+ * @implements {app.ui.page.EntityListRenderer}
+ */
+app.ui.page.PeopleListRenderer = function() {
+
+};
+
+app.ui.page.PeopleListRenderer.prototype.template = document.getElementById('people-list-template');
+
+
+/**
+ * Render model.
+ * @param {Sprintly.People} item
+ * @param {HTMLElement} div
+ */
+app.ui.page.PeopleListRenderer.prototype.render = function(item, div) {
+  var content = this.template.content.cloneNode(true);
+  var id = content.querySelector('a');
+  id.href = '#people/' + item.id;
+  id.textContent = item.id;
+  content.querySelector('.first').textContent = item.first_name;
+  content.querySelector('.last').textContent = item.last_name;
+  div.appendChild(content);
+};
+
