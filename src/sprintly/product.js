@@ -301,6 +301,14 @@ sprintly.Product.EventObject;
 
 
 /**
+ * Clear offline cache by deleting database.
+ */
+sprintly.Product.prototype.clearCache = function() {
+  indexedDB.deleteDatabase(this.db.getName());
+};
+
+
+/**
  * Dispose this. Safe to call multiple times.
  */
 sprintly.Product.prototype.dispose = function() {

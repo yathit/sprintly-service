@@ -49,10 +49,26 @@ app.ui.Setting.prototype.render = function(el) {
   span.setAttribute('name', 'userid');
   this.root_.appendChild(span);
 
+  var logout = document.createElement('a');
+  logout.href = '#logout';
+  logout.textContent = 'logout';
+  logout.onclick = this.onLogout.bind(this);
+  this.root_.appendChild(logout);
+
   this.user.onChanged = this.refresh.bind(this);
 
 };
 
+
+app.ui.Setting.prototype.onLogout = function(e) {
+  var ok = window.confirm('Are you sure you want to logout, this will delete all cache data?');
+  if (ok) {
+    sprintly.logout();
+    setTimeout(function() {
+      location.reload();
+    }, 10);
+  }
+};
 
 
 app.ui.Setting.prototype.onProductChange = function(e) {

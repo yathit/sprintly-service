@@ -35,6 +35,7 @@ app.loadWorkspace = function() {
   }
 };
 
+
 /**
  * Process after login.
  * @param {Promise} promise
@@ -45,13 +46,14 @@ app.processLogin = function(promise) {
     document.getElementById('desktop').style.display = '';
     document.getElementById('setting').style.display = '';
     var profile = sprintly.service.getProfile();
-    googleAnalytics('send', 'login', {'username': profile.username});
     app.model.User.current.setUser(profile.username);
     setTimeout(function() {
       app.loadWorkspace();
     }, 4);
-  }, function() {
-    googleAnalytics('send', 'login-fail');
+  }, function(ev) {
+    if (ev && ev.message) {
+      window.alert(ev.message);
+    }
     document.getElementById('page-login').style.display = '';
     document.getElementById('desktop').style.display = 'none';
   })
@@ -59,12 +61,12 @@ app.processLogin = function(promise) {
 
 
 document.getElementById('login').onclick = function(e) {
-  googleAnalytics('send', 'login-click');
   var user = document.getElementById('username').value;
   var key = document.getElementById('password').value;
   var remember = document.getElementById('remember').checked;
   app.processLogin(sprintly.login(user, key, remember));
 };
+
 
 // initialize UI
 app.ui.header = new app.ui.Header();
@@ -72,7 +74,6 @@ app.ui.header.render(document.getElementById('setting'));
 
 window.addEventListener('active-product', function(e) {
   var id = e.detail.activeProductId;
-  googleAnalytics('send', 'app', {'event': 'active-product', 'id': id});
   if (id && app.getProductIdFromUrl() != id) {
     location.search = id;
   }

@@ -142,14 +142,16 @@ sprintly.Service.prototype.login = function(user, password) {
   var me = this;
   this.authHeader = 'Basic ' + btoa(user + ':' + password);
   return new Promise(function(resolve, reject) {
-    me.listProducts(function(arr) {
-      if (arr) {
-        me.products = arr;
+    me.listProducts(function(json, raw) {
+      if (raw.status == 200) {
+        me.products = json;
         me.username = user;
-        resolve(arr);
+        resolve(json);
       } else {
         me.authHeader = null;
-        reject(new Error('LoginFail'));
+        var ev = new Error('LoginFail');
+        ev.message = json.message;
+        reject(ev);
       }
     });
   });
