@@ -27,7 +27,7 @@
 })(window,document,'script','//www.google-analytics.com/analytics.js','googleAnalytics');
 
 googleAnalytics('create', 'UA-33861582-7', 'auto');
-ga('set', {
+googleAnalytics('set', {
   'appName': 'Yathit offline app for sprint.ly',
   'appVersion': '1.0'
 });
