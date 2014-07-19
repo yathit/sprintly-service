@@ -20,6 +20,19 @@
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
+// Google analytics code
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','googleAnalytics');
+
+googleAnalytics('create', 'UA-33861582-7', 'auto');
+ga('set', {
+  'appName': 'Yathit offline app for sprint.ly',
+  'appVersion': '1.0'
+});
+googleAnalytics('send', 'pageview', {'screenName': 'Base'});
+
 // define namespaces
 var app = {};
 app.model = {};
