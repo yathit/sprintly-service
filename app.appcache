@@ -4,6 +4,7 @@ sprintly-offline-app.html
 app.css
 lib/ydn.db-core-sync.js
 src/base.js
+src/app.js
 src/sprintly/base.js
 src/sprintly/service.js
 src/sprintly/product.js
