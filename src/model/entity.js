@@ -40,7 +40,7 @@ app.model.Entity = function(entity) {
 
   /**
    * sprint.ly entity identifier.
-   * @type {?string}
+   * @type {?number}
    */
   this.number = null;
 
@@ -53,20 +53,20 @@ app.model.Entity = function(entity) {
 
 /**
  * Set model identifier.
- * @param {string} number model id.
+ * @param {number} number model id.
  */
 app.model.Entity.prototype.setNumber = function(number) {
   if (this.number != number) {
     this.number = number;
     if (number) {
       var req = this.entity.get(this.number);
-      req.addProgback(function(obj) {
-        this.obj = obj;
+      req.progress(function(obj) {
+        this.data = obj;
         this.onChanged();
       }, this);
-      req.addCallback(function(obj) {
-        if (this.obj !== obj) {
-          this.obj = obj;
+      req.done(function(obj) {
+        if (this.data !== obj) {
+          this.data = obj;
           this.onChanged();
         }
       }, this);

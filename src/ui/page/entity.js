@@ -62,6 +62,7 @@ app.ui.page.Entity.prototype.getModel = function() {
 
 app.ui.page.Entity.prototype.render = function(el) {
   el.appendChild(this.root_);
+  this.head_.textContent = 'Entity toolbar';
   this.refresh();
   this.model.onChanged = this.onModelChanged.bind(this);
 };
@@ -85,9 +86,8 @@ app.ui.page.Entity.prototype.refresh = function() {
 app.ui.page.Entity.prototype.setShown = function(val, query) {
   this.root_.style.display = val ? '' : 'none';
   if (val) {
-    this.model.entity.update().always(function(cnt) {
-      this.refresh();
-    }, this)
+    var id = parseInt(query, 10);
+    this.model.setNumber(id);
   }
 };
 

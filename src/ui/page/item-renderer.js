@@ -35,6 +35,7 @@ app.ui.page.ItemRenderer = function() {
 app.ui.page.ItemRenderer.prototype.render = function(item, div) {
   div.innerHTML = '';
   if (item.data) {
+    console.log(item.data);
     var toolbar = document.createElement('div');
     toolbar.textContent = item.data.number;
     div.appendChild(toolbar);

@@ -321,7 +321,6 @@ sprintly.Product.schema = {
     name: 'meta'
   }, {
     name: 'items',
-    keyPath: 'number',
     autoIncrement: true,
     indexes: [{
       name: 'tags',
@@ -335,7 +334,6 @@ sprintly.Product.schema = {
     }]
   }, {
     name: 'people',
-    keyPath: 'number',
     autoIncrement: true,
     indexes: [{
       name: 'last_modified'
