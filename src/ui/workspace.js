@@ -43,6 +43,7 @@ app.Workspace = function(product) {
   var peopleList = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
 
   this.pages = [
+    new app.ui.page.Doc(),
     new app.ui.page.Entity(item, new app.ui.page.ItemRenderer()),
     new app.ui.page.Entity(people, new app.ui.page.PeopleRenderer()),
     new app.ui.page.EntityList(itemList, new app.ui.page.ItemListRenderer()),

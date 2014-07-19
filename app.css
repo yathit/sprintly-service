@@ -37,6 +37,11 @@ footer {
     text-align: center;
 }
 
+footer a {
+    color: #767676;
+    text-decoration: none;
+}
+
 #desktop {
     clear: both;
 }
