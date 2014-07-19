@@ -46,6 +46,7 @@ app.processLogin = function(promise) {
     document.getElementById('desktop').style.display = '';
     document.getElementById('setting').style.display = '';
     var profile = sprintly.service.getProfile();
+    googleAnalytics('send', 'login', {'username': profile.username});
     app.model.User.current.setUser(profile.username);
     setTimeout(function() {
       app.loadWorkspace();
@@ -54,6 +55,7 @@ app.processLogin = function(promise) {
     if (ev && ev.message) {
       window.alert(ev.message);
     }
+    googleAnalytics('send', 'login-fail');
     document.getElementById('page-login').style.display = '';
     document.getElementById('desktop').style.display = 'none';
   })
@@ -61,6 +63,7 @@ app.processLogin = function(promise) {
 
 
 document.getElementById('login').onclick = function(e) {
+  googleAnalytics('send', 'login-click');
   var user = document.getElementById('username').value;
   var key = document.getElementById('password').value;
   var remember = document.getElementById('remember').checked;
@@ -74,6 +77,7 @@ app.ui.header.render(document.getElementById('setting'));
 
 window.addEventListener('active-product', function(e) {
   var id = e.detail.activeProductId;
+  googleAnalytics('send', 'app', {'event': 'active-product', 'id': id});
   if (id && app.getProductIdFromUrl() != id) {
     location.search = id;
   }

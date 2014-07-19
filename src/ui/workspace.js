@@ -88,6 +88,7 @@ app.Workspace.prototype.switchPage = function(name, query) {
     var show = page.name == pageName;
     if (show) {
       ok = true;
+      googleAnalytics('send', 'pageView', {'pageName': pageName});
     }
     page.setShown(show, query);
   }

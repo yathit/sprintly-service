@@ -39,6 +39,7 @@ app.model = {};
 app.ui = {};
 app.ui.page = {};
 
+googleAnalytics = function() {};
 
 /**
  * @returns {string}
