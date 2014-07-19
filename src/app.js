@@ -35,6 +35,7 @@ app.loadWorkspace = function() {
   }
 };
 
+
 /**
  * Process after login.
  * @param {Promise} promise
@@ -49,7 +50,10 @@ app.processLogin = function(promise) {
     setTimeout(function() {
       app.loadWorkspace();
     }, 4);
-  }, function() {
+  }, function(ev) {
+    if (ev && ev.message) {
+      window.alert(ev.message);
+    }
     document.getElementById('page-login').style.display = '';
     document.getElementById('desktop').style.display = 'none';
   })
@@ -62,6 +66,7 @@ document.getElementById('login').onclick = function(e) {
   var remember = document.getElementById('remember').checked;
   app.processLogin(sprintly.login(user, key, remember));
 };
+
 
 // initialize UI
 app.ui.header = new app.ui.Header();

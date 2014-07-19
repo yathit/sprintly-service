@@ -99,8 +99,22 @@ sprintly.login = function(username, password, remember) {
       sprintly.products[id].dispose();
       delete sprintly.products[id];
     }
-    window.dispatchEvent(new CustomEvent('sprintly-login-fail'));
+    window.dispatchEvent(new CustomEvent(sprintly.EventType.LOGIN_FAIL));
+    throw e;
   });
+};
+
+
+/**
+ * Logout.
+ */
+sprintly.logout = function() {
+  localStorage.removeItem('user-profile');
+  sessionStorage.removeItem('user-profile');
+  window.dispatchEvent(new CustomEvent(sprintly.EventType.LOGOUT));
+  for (var id in sprintly.products) {
+    sprintly.products[id].clearCache();
+  }
 };
 
 
