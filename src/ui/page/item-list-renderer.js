@@ -1,3 +1,5 @@
+
+
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -20,33 +22,28 @@
 /**
  * Item entity renderer.
  * @constructor
- * @implements {app.ui.page.EntityRenderer}
+ * @implements {app.ui.page.EntityListRenderer}
  */
-app.ui.page.PeopleRenderer = function() {
-
-  /**
-   * @final
-   * @type {string}
-   */
-  this.name = 'items';
+app.ui.page.ItemListRenderer = function() {
 
 };
 
 
 /**
  * Render model.
- * @param {Sprintly.People} item
- * @returns {HTMLElement}
+ * @param {Sprintly.Item} item
+ * @param {HTMLElement} div element to be rendered on.
  */
-app.ui.page.PeopleRenderer.prototype.render = function(item) {
-  var div = document.createElement('div');
+app.ui.page.ItemListRenderer.prototype.render = function(item, div) {
   var no = document.createElement('a');
   no.textContent = item.number;
-  no.href = '#people/' + item.number;
+  no.href = '#items/' + item.number;
+  var status = document.createElement('span');
+  status.textContent = item.status;
   var description = document.createElement('span');
-  description.textContent = item.first_name + ' ' + item.last_name;
+  description.textContent = item.description;
   div.appendChild(no);
+  div.appendChild(status);
   div.appendChild(description);
-  return div;
 };
 

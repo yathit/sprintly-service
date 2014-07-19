@@ -11,27 +11,27 @@
 // limitations under the License.
 
 /**
- * @fileOverview Item entity renderer.
+ * @fileOverview Entity list item renderer.
  *
  * @author kyawtun@yathit.com (Kyaw Tun)
  */
 
 
 /**
- * Entity renderer.
+ * Entity list item renderer.
  * @interface
  */
-app.ui.page.EntityRenderer = function() {
+app.ui.page.EntityListRenderer = function() {
 
 };
 
 
 /**
  * Render model.
- * @param {app.model.Entity} model model.
+ * @param {Sprintly.Entity} model model.
  * @param {HTMLElement} el Element to be rendered on.
  */
-app.ui.page.EntityRenderer.prototype.render = function(model, el) {
+app.ui.page.EntityListRenderer.prototype.render = function(model, el) {
 
 };
 

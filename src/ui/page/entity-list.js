@@ -20,7 +20,7 @@
 /**
  * Application entity list component.
  * @param {sprintly.EntityList} model
- * @param {app.ui.page.ItemListRenderer} renderer
+ * @param {app.ui.page.EntityListRenderer} renderer
  * @constructor
  */
 app.ui.page.EntityList = function(model, renderer) {
@@ -46,7 +46,7 @@ app.ui.page.EntityList = function(model, renderer) {
    * @final
    * @type {string}
    */
-  this.name = model.name;
+  this.name = model.name + '-list';
 
   this.root_.className = 'item-list ' + this.name;
 
@@ -82,8 +82,7 @@ app.ui.page.EntityList.prototype.refresh = function() {
   for (var i = 0; i < n; i++) {
     var item = this.model.get(i);
     var li = document.createElement('li');
-    var div = this.renderer.render(item);
-    li.appendChild(div);
+    this.renderer.render(item, li);
     ul.appendChild(li);
   }
   this.content_.appendChild(ul);

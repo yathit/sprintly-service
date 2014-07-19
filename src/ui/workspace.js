@@ -37,12 +37,15 @@ app.Workspace = function(product) {
 
   this.toolbar = new app.ui.Toolbar();
 
-  var item = new sprintly.EntityList(product, sprintly.Entity.ITEM);
-  var p1 = new app.ui.page.EntityList(item, new app.ui.page.ItemRenderer());
-  var people = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
-  var p2 = new app.ui.page.EntityList(people, new app.ui.page.PeopleRenderer());
+  var item = new app.model.Entity(product.Item);
+  var itemList = new sprintly.EntityList(product, sprintly.Entity.ITEM);
+  var peopleList = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
 
-  this.pages = [p1, p2];
+  this.pages = [
+    new app.ui.page.Entity(item, new app.ui.page.ItemRenderer()),
+    new app.ui.page.EntityList(itemList, new app.ui.page.ItemListRenderer()),
+    new app.ui.page.EntityList(peopleList, new app.ui.page.PeopleListRenderer())
+  ];
 
 };
 
@@ -57,7 +60,6 @@ app.Workspace.prototype.render = function(el) {
   for (var i = 0; i < this.pages.length; i++) {
     this.pages[i].render(this.root);
   }
-
 
   var me = this;
   window.addEventListener('hashchange', function(e) {
@@ -77,15 +79,21 @@ app.Workspace.prototype.render = function(el) {
  */
 app.Workspace.prototype.switchPage = function(name, query) {
   var ok = false;
+  var pageName = query ? name : name + '-list';
   for (var i = 0; i < this.pages.length; i++) {
     var page = this.pages[i];
-    var show = page.name == name;
+    var show = page.name == pageName;
     if (show) {
       ok = true;
     }
     page.setShown(show, query);
   }
   return ok;
+};
+
+
+app.Workspace.prototype.goHome = function() {
+  location.hash = 'items';
 };
 
 
@@ -97,11 +105,11 @@ app.Workspace.prototype.route = function(hash) {
   if (m) {
     var ok = this.switchPage(m[1], m[2]);
     if (!ok) {
-      location.hash = 'items'; // go home
+      this.goHome();
     }
   } else {
     console.log('unknwon hash ' + hash);
-    location.hash = 'items'; // go home
+    this.goHome();
   }
 };
 

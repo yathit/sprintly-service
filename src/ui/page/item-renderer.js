@@ -24,32 +24,20 @@
  */
 app.ui.page.ItemRenderer = function() {
 
-  /**
-   * @final
-   * @type {string}
-   */
-  this.name = 'items';
-
 };
 
 
 /**
  * Render model.
- * @param {Sprintly.Item} item
- * @returns {HTMLElement}
+ * @param {app.model.Entity} item
+ * @param {HTMLElement} div element to be rendered on.
  */
-app.ui.page.ItemRenderer.prototype.render = function(item) {
-  var div = document.createElement('div');
-  var no = document.createElement('a');
-  no.textContent = item.number;
-  no.href = '#items/' + item.number;
-  var status = document.createElement('span');
-  status.textContent = item.status;
-  var description = document.createElement('span');
-  description.textContent = item.description;
-  div.appendChild(no);
-  div.appendChild(status);
-  div.appendChild(description);
-  return div;
+app.ui.page.ItemRenderer.prototype.render = function(item, div) {
+  div.innerHTML = '';
+  if (item.data) {
+    var toolbar = document.createElement('div');
+    toolbar.textContent = item.data.number;
+    div.appendChild(toolbar);
+  }
 };
 

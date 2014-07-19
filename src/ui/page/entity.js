@@ -19,7 +19,7 @@
 
 /**
  * Entity component.
- * @param {sprintly.EntityList} model
+ * @param {app.model.Entity} model
  * @param {app.ui.page.EntityRenderer} renderer
  * @constructor
  */
@@ -31,7 +31,7 @@ app.ui.page.Entity = function(model, renderer) {
   this.renderer = renderer;
   /**
    * @protected
-   * @type {sprintly.EntityList}
+   * @type {app.model.Entity}
    */
   this.model = model;
   this.root_ = document.createElement('div');
@@ -40,7 +40,6 @@ app.ui.page.Entity = function(model, renderer) {
   this.content_ = document.createElement('div');
   this.root_.appendChild(this.head_);
   this.root_.appendChild(this.content_);
-  this.head_.textContent = 'Item list page';
 
   /**
    * @final
@@ -48,7 +47,7 @@ app.ui.page.Entity = function(model, renderer) {
    */
   this.name = model.name;
 
-  this.root_.className = 'item-list ' + this.name;
+  this.root_.className = 'entity ' + this.name;
 
 };
 
@@ -63,7 +62,6 @@ app.ui.page.Entity.prototype.getModel = function() {
 
 app.ui.page.Entity.prototype.render = function(el) {
   el.appendChild(this.root_);
-
   this.refresh();
   this.model.onChanged = this.onModelChanged.bind(this);
 };
@@ -75,18 +73,7 @@ app.ui.page.Entity.prototype.onModelChanged = function(cnt) {
 
 
 app.ui.page.Entity.prototype.refresh = function() {
-  this.content_.innerHTML = '';
-  var ul = document.createElement('ul');
-  var n = this.model.size();
-  console.log(this + ' refresh ' + n + ' items');
-  for (var i = 0; i < n; i++) {
-    var item = this.model.get(i);
-    var li = document.createElement('li');
-    var div = this.renderer.render(item);
-    li.appendChild(div);
-    ul.appendChild(li);
-  }
-  this.content_.appendChild(ul);
+  this.renderer.render(this.model, this.content_);
 };
 
 

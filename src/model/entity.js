@@ -20,10 +20,23 @@
 
 /**
  * Entity model.
+ * @param {ydn.db.sync.Entity} entity data source for this entity.
  * @constructor
- * @abstract
  */
-app.model.Entity = function() {
+app.model.Entity = function(entity) {
+
+  /**
+   * Source entity.
+   * @type {ydn.db.sync.Entity}
+   * @final
+   */
+  this.entity = entity;
+
+  /**
+   * @type {string} entity name.
+   * @final
+   */
+  this.name = entity.getName();
 
   /**
    * sprint.ly entity identifier.
@@ -36,14 +49,6 @@ app.model.Entity = function() {
    */
   this.data = null;
 };
-
-
-/**
- * Source entity.
- * @type {ydn.db.sync.Entity}
- * @abstract
- */
-app.model.Entity.prototype.entity;
 
 
 /**

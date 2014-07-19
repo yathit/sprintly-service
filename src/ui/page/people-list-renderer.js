@@ -18,20 +18,27 @@
 
 
 /**
- * Entity renderer.
- * @interface
+ * Item entity renderer.
+ * @constructor
+ * @implements {app.ui.page.EntityListRenderer}
  */
-app.ui.page.EntityRenderer = function() {
+app.ui.page.PeopleListRenderer = function() {
 
 };
 
 
 /**
  * Render model.
- * @param {app.model.Entity} model model.
- * @param {HTMLElement} el Element to be rendered on.
+ * @param {Sprintly.People} item
+ * @param {HTMLElement} div
  */
-app.ui.page.EntityRenderer.prototype.render = function(model, el) {
-
+app.ui.page.PeopleListRenderer.prototype.render = function(item, div) {
+  var no = document.createElement('a');
+  no.textContent = item.number;
+  no.href = '#people/' + item.number;
+  var description = document.createElement('span');
+  description.textContent = item.first_name + ' ' + item.last_name;
+  div.appendChild(no);
+  div.appendChild(description);
 };
 
