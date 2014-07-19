@@ -42,13 +42,17 @@ footer {
 }
 
 .toolbar {
-    background-color: #d3d3d3;
-    border: thin solid darkgray;
-    padding: 4px;
+    font: 82% arial,sans-serif;
+    background: #ebeff9;
+    border-bottom: 1px solid #6b90da;
+    padding: 5px 10px 0 5px;
 }
 
 .toolbar > * {
-    padding: 4px;
+    display: inline-block;
+    color: #00c;
+    cursor: pointer;
+    margin: 5px 15px 6px 10px;
 }
 
 .item-list ul {
