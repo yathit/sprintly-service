@@ -23,7 +23,7 @@ src/ui/page/entity-renderer.js
 src/ui/page/entity-list-renderer.js
 src/ui/page/entity.js
 src/ui/page/entity-list.js
-src/ui/page/serach.js
+src/ui/page/search.js
 src/ui/workspace.js
 
 
