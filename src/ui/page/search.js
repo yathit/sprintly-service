@@ -154,8 +154,12 @@ app.ui.page.SearchResultItemRenderer.prototype.render = function (entry, li) {
   details.appendChild(summary);
   // console.log(entry);
   summary.textContent = entry.score.toFixed(2) + ' | ' + entry.value + ' ';
+  var a = document.createElement('a');
+  summary.appendChild(a);
   app.workspace.product.db.get(entry.storeName, entry.primaryKey).done(function (x) {
 
+    a.href = '#items/' + x.number;
+    a.textContent = x.number;
     var title = new app.ui.page.Highlighter(x.title);
     var description = new app.ui.page.Highlighter(x.description);
 

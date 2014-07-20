@@ -60,11 +60,15 @@ app.ui.page.ItemRenderer.prototype.render = function(item, div) {
   if (data) {
     console.log(data);
     var content = this.template.content.cloneNode(true);
+    var a = content.querySelector('a[name=link]');
+    a.href = 'https://sprint.ly/product/' + data.product.id + '/#!/item/' + data.number;
+    a.textContent = '#' + data.number;
     content.querySelector('.score').textContent = data.score;
     content.querySelector('.assigned').textContent = data.assigned_to ?
-        data.assigned_to.first_name : 'unassigned';
+        data.assigned_to.first_name + ' ' + data.assigned_to.last_name : 'unassigned';
     content.querySelector('.title').textContent = data.title;
     content.querySelector('.description').textContent = data.description;
+    content.querySelector('.tags').textContent = data.tags ? data.tags.join(', ') : '';
     div.appendChild(content);
 
   }

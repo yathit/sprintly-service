@@ -62,7 +62,6 @@ app.ui.page.Entity.prototype.getModel = function() {
 
 app.ui.page.Entity.prototype.render = function(el) {
   el.appendChild(this.root_);
-  this.head_.textContent = 'Entity toolbar';
   this.refresh();
   this.model.onChanged = this.onModelChanged.bind(this);
 };
