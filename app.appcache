@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# v1.4 Jul 20, 2014
+# v1.0 Jul 20, 2014
 sprintly-offline-app.html
 app.css
 lib/ydn.db-core-sync.js
@@ -23,6 +23,7 @@ src/ui/page/entity-renderer.js
 src/ui/page/entity-list-renderer.js
 src/ui/page/entity.js
 src/ui/page/entity-list.js
+src/ui/page/serach.js
 src/ui/workspace.js
 
 
