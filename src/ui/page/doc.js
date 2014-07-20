@@ -60,4 +60,3 @@ app.ui.page.Doc.prototype.setShown = function(val, query) {
 };
 
 
-
