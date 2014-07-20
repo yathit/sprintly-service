@@ -48,6 +48,7 @@ app.model.Entity = function(entity) {
    * @type {Sprintly.Entity}
    */
   this.data = null;
+
 };
 
 

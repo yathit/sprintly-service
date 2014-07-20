@@ -78,12 +78,13 @@ app.Workspace.prototype.render = function(el) {
 /**
  * Switch to a page.
  * @param {string} name page name.
- * @param {string} query query parameter.
+ * @param {string} id query parameter.
+ * @param {Object} filter query parameter.
  * @return {boolean}
  */
-app.Workspace.prototype.switchPage = function(name, query) {
+app.Workspace.prototype.switchPage = function(name, id, filter) {
   var ok = false;
-  var pageName = query ? name : name + '-list';
+  var pageName = id ? name : name + '-list';
   for (var i = 0; i < this.pages.length; i++) {
     var page = this.pages[i];
     var show = page.name == pageName;
@@ -91,7 +92,7 @@ app.Workspace.prototype.switchPage = function(name, query) {
       ok = true;
       googleAnalytics('send', 'pageView', {'pageName': pageName});
     }
-    page.setShown(show, query);
+    page.setShown(show, id, filter);
   }
   return ok;
 };
@@ -106,9 +107,17 @@ app.Workspace.prototype.goHome = function() {
  * @param {string} hash
  */
 app.Workspace.prototype.route = function(hash) {
-  var m = hash.match(/^#([^\/]+)\/?(\w+)?/);
+  var m = hash.match(/^#([^\/]+)\/?([^@]*)@?(.*)/);
   if (m) {
-    var ok = this.switchPage(m[1], m[2]);
+    var filter = {};
+    if (m[3]) {
+      var fs = m[3].split(',');
+      for (var i = 0; i < fs.length; i++) {
+        var p = fs[i].split('=');
+        filter[p[0]] = p[1];
+      }
+    }
+    var ok = this.switchPage(m[1], m[2], filter);
     if (!ok) {
       this.goHome();
     }

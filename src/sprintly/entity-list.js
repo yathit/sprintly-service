@@ -79,6 +79,13 @@ sprintly.EntityList = function(product, name, limit) {
   this.records = [];
 
   /**
+   * Query filter.
+   * @type {!Object}
+   * @protected
+   */
+  this.filter = {};
+
+  /**
    * Timestamp for checking cache stall status.
    * @type {number}
    * @private
@@ -133,6 +140,17 @@ sprintly.EntityList.prototype.checkUpdated_ = function() {
       this.onChanged();
     }
   }, this);
+};
+
+
+/**
+ * Set filter.
+ * @param {Object=} filter query filter.
+ */
+sprintly.EntityList.prototype.setFilter = function(filter) {
+  if (filter && JSON.stringify(this.filter) != JSON.stringify(filter)) {
+
+  }
 };
 
 

@@ -60,7 +60,7 @@ sprintly.Product = function(service, product) {
   this.Item = this.db.entity(this, sprintly.Entity.ITEM);
 
   /**
-   * Item entity.
+   * People entity.
    * @type {ydn.db.sync.Entity}
    * @final
    */
@@ -83,6 +83,26 @@ sprintly.Product = function(service, product) {
     }, me);
   });
 
+};
+
+
+/**
+ * Validate entry data.
+ * Comment entry has missing `item_id` value.
+ * @param {string} name entity name
+ * @param {number} item_id parent item entry
+ * @param {Object} entry entry or entries to validate.
+ */
+sprintly.Product.validateEntry = function(name, item_id, entry) {
+  if (name == sprintly.Entity.COMMENT) {
+    if (entry instanceof Array) {
+      for (var i = 0; i < entry.length; i++) {
+        sprintly.Product.validateEntry(name, item_id, entry[i]);
+      }
+    } else {
+      entry['item_id'] = item_id;
+    }
+  }
 };
 
 
@@ -355,6 +375,16 @@ sprintly.Product.schema = {
       name: 'last_modified'
     }, {
       name: 'type'
+    }]
+  }, {
+    name: 'comments',
+    autoIncrement: true,
+    indexes: [{
+      name: 'created_at'
+    }, {
+      name: 'id'
+    }, {
+      name: 'item_id'
     }]
   }, {
     name: 'people',

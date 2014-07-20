@@ -74,6 +74,9 @@ app.ui.page.EntityList.prototype.onModelChanged = function(cnt) {
 };
 
 
+/**
+ * Refresh listing
+ */
 app.ui.page.EntityList.prototype.refresh = function() {
   this.content_.innerHTML = '';
   var ul = document.createElement('ul');
@@ -93,10 +96,12 @@ app.ui.page.EntityList.prototype.refresh = function() {
  *
  * @param {boolean} val
  * @param {string=} query query parameter.
+ * @param {Object=} filter query parameter.
  */
-app.ui.page.EntityList.prototype.setShown = function(val, query) {
+app.ui.page.EntityList.prototype.setShown = function(val, query, filter) {
   this.root_.style.display = val ? '' : 'none';
   if (val) {
+    this.model.setFilter(filter);
     this.model.entity.update().always(function(cnt) {
       this.refresh();
     }, this)
