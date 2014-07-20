@@ -52,6 +52,20 @@ sprintly.Product = function(service, product) {
    */
   this.db = new ydn.db.Storage('product-' + product.id, sprintly.Product.schema);
 
+  /**
+   * Item entity.
+   * @type {ydn.db.sync.Entity}
+   * @final
+   */
+  this.Item = this.db.entity(this, sprintly.Entity.ITEM);
+
+  /**
+   * Item entity.
+   * @type {ydn.db.sync.Entity}
+   * @final
+   */
+  this.People = this.db.entity(this, sprintly.Entity.PEOPLE);
+
   var me = this;
   /**
    * Resolve on Product entities are ready.
@@ -62,19 +76,6 @@ sprintly.Product = function(service, product) {
       if (e) {
         reject(e);
       } else {
-        /**
-         * Item entity.
-         * @type {ydn.db.sync.Entity}
-         * @final
-         */
-        this.Item = new ydn.db.sync.Entity(this, sprintly.Entity.ITEM, this.db, sprintly.Product.schema);
-        /**
-         * Item entity.
-         * @type {ydn.db.sync.Entity}
-         * @final
-         */
-        this.People = new ydn.db.sync.Entity(this, sprintly.Entity.PEOPLE, this.db, sprintly.Product.schema);
-
         setTimeout(function() {
           resolve(); // let db to execute
         }, 4);
