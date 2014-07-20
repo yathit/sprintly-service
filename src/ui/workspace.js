@@ -111,10 +111,10 @@ app.Workspace.prototype.route = function(hash) {
   if (m) {
     var filter = {};
     if (m[3]) {
-      var fs = m[3].split(',');
-      for (var i = 0; i < fs.length; i++) {
-        var p = fs[i].split('=');
-        filter[p[0]] = p[1];
+      try {
+        filter = JSON.parse(m[3]);
+      } catch (e) {
+        filter = {};
       }
     }
     var ok = this.switchPage(m[1], m[2], filter);
