@@ -67,13 +67,13 @@ sprintly.Product = function(service, product) {
          * @type {ydn.db.sync.Entity}
          * @final
          */
-        this.Item = new ydn.db.sync.Entity(this, sprintly.Entity.ITEM, this.db);
+        this.Item = new ydn.db.sync.Entity(this, sprintly.Entity.ITEM, this.db, sprintly.Product.schema);
         /**
          * Item entity.
          * @type {ydn.db.sync.Entity}
          * @final
          */
-        this.People = new ydn.db.sync.Entity(this, sprintly.Entity.PEOPLE, this.db);
+        this.People = new ydn.db.sync.Entity(this, sprintly.Entity.PEOPLE, this.db, sprintly.Product.schema);
 
         setTimeout(function() {
           resolve(); // let db to execute
@@ -325,6 +325,21 @@ sprintly.Product.prototype.dispose = function() {
  * @type {Object}
  */
 sprintly.Product.schema = {
+  fullTextCatalogs: [{
+    name: 'all',
+    lang: 'en',
+    sources: [
+      {
+        storeName: 'items',
+        keyPath: 'title',
+        weight: 1.0
+      }, {
+        storeName: 'items',
+        keyPath: 'description',
+        weight: 0.5
+      }
+    ]
+  }],
   stores: [ydn.db.sync.Entity.schema, {
     name: 'meta'
   }, {

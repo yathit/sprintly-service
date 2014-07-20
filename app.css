@@ -63,9 +63,20 @@ footer a {
 
 .toolbar > * {
     display: inline-block;
+    margin: 5px 15px 6px 10px;
+}
+
+.toolbar A {
     color: #00c;
     cursor: pointer;
-    margin: 5px 15px 6px 10px;
+}
+
+.toolbar .search {
+    float: right;
+}
+
+.highlighted {
+    background-color: lightgoldenrodyellow;
 }
 
 .item-list ul {

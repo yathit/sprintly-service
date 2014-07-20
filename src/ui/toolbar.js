@@ -41,6 +41,30 @@ app.ui.Toolbar.prototype.render = function(el) {
     a.textContent = items[item].label;
     this.root_.appendChild(a);
   }
+
+  var search = document.createElement('input');
+  search.className = 'search';
+  search.setAttribute('placeholder', 'Search');
+  search.onkeypress = this.onSearch.bind(this);
+  this.root_.appendChild(search);
+
   el.appendChild(this.root_);
+};
+
+
+app.ui.Toolbar.prototype.query_ = function(term) {
+  location.hash = '#search/' + term;
+};
+
+
+/**
+ * @protected
+ * @param {KeyboardEvent} ev
+ */
+app.ui.Toolbar.prototype.onSearch = function(ev) {
+  if (ev.keyIdentifier == 'Enter') {
+    var input = this.root_.querySelector('.search');
+    this.query_(input.value);
+  }
 };
 
