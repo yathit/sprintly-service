@@ -2,7 +2,7 @@ CACHE MANIFEST
 # v1.0 Jul 20, 2014
 sprintly-offline-app.html
 app.css
-lib/ydn.db-core-sync.js
+lib/ydn.db-i-core-e-cur-qry-sync-text-dev.js
 src/base.js
 src/app.js
 src/sprintly/base.js
