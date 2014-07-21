@@ -68,3 +68,12 @@ app.ui.Toolbar.prototype.onSearch = function(ev) {
   }
 };
 
+
+/**
+ * Update hash value of the link.
+ * @param {string} name link name
+ * @param {string} hash
+ */
+app.ui.Toolbar.prototype.updateHash = function(name, hash) {
+  this.root_.querySelector('a[name=' + name + ']').href = hash;
+};

@@ -127,7 +127,17 @@ sprintly.EntityList.prototype.refractoryPeriod = 500;
  * @private
  */
 sprintly.EntityList.prototype.checkUpdated_ = function() {
-  this.product.db.values(this.name, null, this.limit, this.offset).done(function(objs) {
+  var q = this.product.db.from(this.name);
+  for (var task in this.filter) {
+    if (task == 'order') {
+      q = q.order(this.filter[task]);
+    } else if (task == 'direction') {
+      if (this.filter[task] == 'descending') {
+        q = q.reverse();
+      }
+    }
+  }
+  q.list(this.limit).done(function(objs) {
     this.lastUpdateCheck_ = new Date().getTime();
     if (objs.length == 0 && this.records.length == 0) {
       return;
@@ -148,9 +158,12 @@ sprintly.EntityList.prototype.checkUpdated_ = function() {
  * @param {Object=} filter query filter.
  */
 sprintly.EntityList.prototype.setFilter = function(filter) {
-  if (filter && JSON.stringify(this.filter) != JSON.stringify(filter)) {
-
+  if (!filter) {
+    this.filter = {};
+  } else {
+    this.filter = filter;
   }
+  this.lastUpdateCheck_ = NaN;
 };
 
 

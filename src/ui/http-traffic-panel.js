@@ -40,7 +40,7 @@ app.ui.HttpTrafficPanel.prototype.render = function(el) {
  * Maximum time interval a message wil stay on the panel.
  * @type {number}
  */
-app.ui.HttpTrafficPanel.prototype.life = 30000; // ms
+app.ui.HttpTrafficPanel.prototype.life = 3000; // ms
 
 
 app.ui.HttpTrafficPanel.prototype.addMessage = function(msg) {

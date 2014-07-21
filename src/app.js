@@ -74,12 +74,23 @@ document.getElementById('login').onclick = function(e) {
 // initialize UI
 app.ui.header = new app.ui.Header();
 app.ui.header.render(document.getElementById('setting'));
+app.ui.docPages = new app.ui.page.Doc();
+app.ui.docPages.render(document.getElementById('doc-pages'));
 
 window.addEventListener('active-product', function(e) {
   var id = e.detail.activeProductId;
   googleAnalytics('send', 'app', {'event': 'active-product', 'id': id});
   if (id && app.getProductIdFromUrl() != id) {
     location.search = id;
+  }
+});
+
+window.addEventListener('hashchange', function(e) {
+  var m = location.hash.match(/^#doc\/([^@]+)/);
+  if (m) {
+    app.ui.docPages.setShown(true, m[1]);
+  } else {
+    app.ui.docPages.setShown(false);
   }
 });
 

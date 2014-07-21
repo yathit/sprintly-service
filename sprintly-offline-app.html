@@ -84,6 +84,23 @@
   </div>
 </template>
 
+<template id="item-list-filter-template">
+  <style>
+  </style>
+  <div class="filter-toolbar">
+    <select name="order">
+      <option value=""></option>
+      <option value="last_modified">Last modified</option>
+      <option value="created">Created</option>
+    </select>
+    <select name="direction">
+      <option value=""></option>
+      <option value="ascending">Ascending</option>
+      <option value="descending">Descending</option>
+    </select>
+  </div>
+</template>
+
 <template id="people-list-template">
   <style>
     .people > * {
@@ -115,7 +132,7 @@
 </template>
 <template id="doc-privacy">
   <h3>Privacy</h3>
-  <p>Like any other website we track you using awful <a href="http://www.google.com.sg/analytics/">Google Analytics</a>, who may share your information with third party including NSA (who know?) using cookie and any other trackable means.</p>
+  <p>Like any other website we track you using awful <a href="http://www.google.com.sg/analytics/">Google Analytics</a>, who may share your information with third party including marketers, NSA (who know?) using cookie and any other trackable means. Sorry we don't care "Do Not Track".</p>
   <p>Your password is not send to Google or my server. It saves only in this browser using WebStorage.</p>
 </template>
 <template id="doc-contactus">
@@ -134,7 +151,7 @@
 </template>
 <template id="doc-aboutus">
   <h3>About Us</h3>
-  <p>While working at <a href="https://sprint.ly">spirnt.ly</a> (a Beautiful Project Manager software), <a href="https://twitter.com/yathit">Kyaw Tun</a>  developed this open source software on his free time as show case for YDN-DB synchronization, full text search feature and sprint.ly API.
+  <p><a href="https://twitter.com/yathit">Kyaw Tun</a>, <a href="http://quickleft.com/blog/meet-the-team-qler-kyaw">a spirnter</a>, never get enough of coding and developed this open source software on his free time as show case for YDN-DB synchronization, full text search feature and sprint.ly API.
   </p>
   <p>This project is not affiliated with <a href="https://sprint.ly">spirnt.ly</a>.</p>
   <p>This is an open source software. Check out <a href="https://github.com/yathit/sprintly-service">this project in github</a>.</p>
@@ -146,6 +163,7 @@
 <script src="src/ui/setting.js"></script>
 <script src="src/ui/toolbar.js"></script>
 <script src="src/ui/page/doc.js"></script>
+<script src="src/ui/page/list-filter.js"></script>
 <script src="src/ui/page/entity-renderer.js"></script>
 <script src="src/ui/page/entity-list-renderer.js"></script>
 <script src="src/ui/page/entity.js"></script>
@@ -175,7 +193,7 @@
 
 
   </div>
-
+  <div id="doc-pages"></div>
   <footer>
     <a href="#doc/terms">Terms</a> |
     <a href="#doc/privacy">Privacy</a> |

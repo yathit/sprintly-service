@@ -15,15 +15,15 @@ header {
 }
 
 
-.left {
+header .left {
     float: left;
-    display: inline;
+    display: inline-block;
     overflow: hidden;
 }
 
-.right {
+header .right {
     float: right;
-    display: inline;
+    display: inline-block;
 }
 
 

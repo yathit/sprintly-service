@@ -43,7 +43,6 @@ app.Workspace = function(product) {
   var peopleList = new sprintly.EntityList(product, sprintly.Entity.PEOPLE);
 
   this.pages = [
-    new app.ui.page.Doc(),
     new app.ui.page.Search(),
     new app.ui.page.Entity(item, new app.ui.page.ItemRenderer()),
     new app.ui.page.Entity(people, new app.ui.page.PeopleRenderer()),
@@ -90,6 +89,9 @@ app.Workspace.prototype.switchPage = function(name, id, filter) {
     var show = page.name == pageName;
     if (show) {
       ok = true;
+      if (pageName == 'items-list') {
+        this.toolbar.updateHash('items', location.hash);
+      }
       googleAnalytics('send', 'pageView', {'pageName': pageName});
     }
     page.setShown(show, id, filter);
@@ -107,7 +109,7 @@ app.Workspace.prototype.goHome = function() {
  * @param {string} hash
  */
 app.Workspace.prototype.route = function(hash) {
-  var m = hash.match(/^#([^\/]+)\/?([^@]*)@?(.*)/);
+  var m = hash.match(/^#([^(\/|@)]+)\/?([^@]*)@?(.*)/);
   if (m) {
     var filter = {};
     if (m[3]) {
@@ -118,9 +120,6 @@ app.Workspace.prototype.route = function(hash) {
       }
     }
     var ok = this.switchPage(m[1], m[2], filter);
-    if (!ok) {
-      this.goHome();
-    }
   } else {
     console.log('unknwon hash ' + hash);
     this.goHome();

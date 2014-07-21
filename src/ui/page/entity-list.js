@@ -36,17 +36,23 @@ app.ui.page.EntityList = function(model, renderer) {
   this.model = model;
   this.root_ = document.createElement('div');
   this.root_.style.display = 'none';
-  this.head_ = document.createElement('div');
+  var head = document.createElement('div');
   this.content_ = document.createElement('div');
-  this.root_.appendChild(this.head_);
+  this.root_.appendChild(head);
   this.root_.appendChild(this.content_);
-  this.head_.textContent = 'Item list page';
 
   /**
    * @final
    * @type {string}
    */
   this.name = model.name + '-list';
+
+  /**
+   * @type {app.ui.page.ListFilter}
+   * @protected
+   */
+  this.filter = model.name == sprintly.Entity.ITEM ?
+      new app.ui.page.ItemListFilter() : new app.ui.page.ListFilter();
 
   this.root_.className = 'item-list ' + this.name;
 
@@ -63,6 +69,7 @@ app.ui.page.EntityList.prototype.getModel = function() {
 
 app.ui.page.EntityList.prototype.render = function(el) {
   el.appendChild(this.root_);
+  this.filter.render(this.root_.firstElementChild);
 
   this.refresh();
   this.model.onChanged = this.onModelChanged.bind(this);
@@ -81,7 +88,7 @@ app.ui.page.EntityList.prototype.refresh = function() {
   this.content_.innerHTML = '';
   var ul = document.createElement('ul');
   var n = this.model.size();
-  console.log(this + ' refresh ' + n + ' items');
+  // console.log(this + ' refresh ' + n + ' items');
   for (var i = 0; i < n; i++) {
     var item = this.model.get(i);
     var li = document.createElement('li');
@@ -101,6 +108,7 @@ app.ui.page.EntityList.prototype.refresh = function() {
 app.ui.page.EntityList.prototype.setShown = function(val, query, filter) {
   this.root_.style.display = val ? '' : 'none';
   if (val) {
+    this.filter.updateFilter(filter);
     this.model.setFilter(filter);
     this.model.entity.update().always(function(cnt) {
       this.refresh();
