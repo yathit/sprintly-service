@@ -124,6 +124,7 @@ sprintly.EntityList.prototype.refractoryPeriod = 500;
 
 /**
  * Listen entity update event.
+ * @return {ydn.db.Request}
  * @private
  */
 sprintly.EntityList.prototype.checkUpdated_ = function() {
@@ -137,7 +138,7 @@ sprintly.EntityList.prototype.checkUpdated_ = function() {
       }
     }
   }
-  q.list(this.limit).done(function(objs) {
+  return q.list(this.limit).done(function(objs) {
     this.lastUpdateCheck_ = new Date().getTime();
     if (objs.length == 0 && this.records.length == 0) {
       return;
@@ -202,3 +203,13 @@ sprintly.EntityList.prototype.toString = function() {
   return 'EntityList:' + this.name + ' ' + this.records.length;
 };
 
+
+/**
+ * Update
+ * @returns {!ydn.async.Deferred}
+ */
+sprintly.EntityList.prototype.update = function() {
+  return this.entity.update().done(function() {
+    return this.checkUpdated_();
+  }, this);
+};

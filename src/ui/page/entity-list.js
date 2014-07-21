@@ -110,9 +110,9 @@ app.ui.page.EntityList.prototype.setShown = function(val, query, filter) {
   if (val) {
     this.filter.updateFilter(filter);
     this.model.setFilter(filter);
-    this.model.entity.update().always(function(cnt) {
+    this.model.update().always(function(cnt) {
       this.refresh();
-    }, this)
+    }, this);
   }
 };
 
@@ -120,5 +120,6 @@ app.ui.page.EntityList.prototype.setShown = function(val, query, filter) {
 app.ui.page.EntityList.prototype.toString = function() {
   return 'ItemListPage:' + this.name;
 };
+
 
 

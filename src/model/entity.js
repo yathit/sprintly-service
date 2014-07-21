@@ -85,3 +85,10 @@ app.model.Entity.prototype.setNumber = function(number) {
 app.model.Entity.prototype.onChanged = function() {};
 
 
+/**
+ * Update
+ * @returns {!ydn.async.Deferred}
+ */
+app.model.Entity.prototype.update = function() {
+  return this.entity.update();
+};
