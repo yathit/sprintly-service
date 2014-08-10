@@ -31,7 +31,8 @@ app.ui.Toolbar = function() {
 app.ui.Toolbar.prototype.render = function(el) {
   var items = {
     'items': {label: 'Items'},
-    'people': {label: 'People'}
+    'people': {label: 'People'},
+    'ticket-matrix': {label: 'Ticket Matrix'}
   };
   for (var item in items) {
     var a = document.createElement('a');

@@ -46,7 +46,7 @@ app.processLogin = function(promise) {
     document.getElementById('desktop').style.display = '';
     document.getElementById('setting').style.display = '';
     var profile = sprintly.service.getProfile();
-    googleAnalytics('send', 'login', {'username': profile.username});
+    googleAnalytics('send', 'login', profile.username);
     app.model.User.current.setUser(profile.username);
     setTimeout(function() {
       app.loadWorkspace();
@@ -79,14 +79,14 @@ app.ui.docPages.render(document.getElementById('doc-pages'));
 
 window.addEventListener('active-product', function(e) {
   var id = e.detail.activeProductId;
-  googleAnalytics('send', 'app', {'event': 'active-product', 'id': id});
+  googleAnalytics('send', 'active-product', id);
   if (id && app.getProductIdFromUrl() != id) {
     location.search = id;
   }
 });
 
 window.addEventListener('hashchange', function(e) {
-  var m = location.hash.match(/^#doc\/([^@]+)/);
+  var m = location.hash.match(/^#(doc|ticket-matrix)\/([^@]+)/);
   if (m) {
     app.ui.docPages.setShown(true, m[1]);
   } else {

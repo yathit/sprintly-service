@@ -44,6 +44,7 @@ app.Workspace = function(product) {
 
   this.pages = [
     new app.ui.page.Search(),
+    new app.ui.page.TicketMatrix(),
     new app.ui.page.Entity(item, new app.ui.page.ItemRenderer()),
     new app.ui.page.Entity(people, new app.ui.page.PeopleRenderer()),
     new app.ui.page.EntityList(itemList, new app.ui.page.ItemListRenderer()),
@@ -92,7 +93,7 @@ app.Workspace.prototype.switchPage = function(name, id, filter) {
       if (pageName == 'items-list') {
         this.toolbar.updateHash('items', location.hash);
       }
-      googleAnalytics('send', 'pageView', {'pageName': pageName});
+      googleAnalytics('send', 'pageView', pageName);
     }
     page.setShown(show, id, filter);
   }
