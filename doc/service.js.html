@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Source: service.js</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <script src="scripts/jquery.min.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/jaguar.css">
+    
+    
+    <script>
+    var config = {"monospaceLinks":true,"cleverLinks":true,"default":{"outputSourceFiles":true},"applicationName":"Sprint.ly offline service","disqus":"","googleAnalytics":"","openGraph":{"title":"","type":"website","image":"","site_name":"","url":""},"meta":{"title":"","description":"","keyword":""}};
+    </script>
+    
+
+    
+</head>
+<body>
+<div id="wrap" class="clearfix">
+    
+<div class="navigation">
+    <h3 class="applicationName"><a href="index.html">Sprint.ly offline service</a></h3>
+
+    <div class="search">
+        <input id="search" type="text" class="form-control input-sm" placeholder="Search Documentations">
+    </div>
+    <ul class="list">
+    
+        <li class="item" data-name="sprintly">
+            <span class="title">
+                <a href="sprintly.html">sprintly</a>
+                
+                <span class="static">static</span>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="sprintly.Entity"><a href="sprintly.html#Entity">Entity</a></li>
+            
+                <li data-name="sprintly.EventType"><a href="sprintly.html#EventType">EventType</a></li>
+            
+                <li data-name="sprintly.products"><a href="sprintly.html#products">products</a></li>
+            
+                <li data-name="sprintly.service"><a href="sprintly.html#service">service</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="sprintly.login"><a href="sprintly.html#login">login</a></li>
+            
+                <li data-name="sprintly.run"><a href="sprintly.html#run">run</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="sprintly.EntityList">
+            <span class="title">
+                <a href="sprintly.EntityList.html">sprintly.EntityList</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="sprintly.EntityList#entity"><a href="sprintly.EntityList.html#entity">entity</a></li>
+            
+                <li data-name="sprintly.EntityList#limit"><a href="sprintly.EntityList.html#limit">limit</a></li>
+            
+                <li data-name="sprintly.EntityList#name"><a href="sprintly.EntityList.html#name">name</a></li>
+            
+                <li data-name="sprintly.EntityList#offset"><a href="sprintly.EntityList.html#offset">offset</a></li>
+            
+                <li data-name="sprintly.EntityList#product"><a href="sprintly.EntityList.html#product">product</a></li>
+            
+                <li data-name="sprintly.EntityList#records"><a href="sprintly.EntityList.html#records">records</a></li>
+            
+                <li data-name="sprintly.EntityList#refractoryPeriod"><a href="sprintly.EntityList.html#refractoryPeriod">refractoryPeriod</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="sprintly.EntityList#dispose"><a href="sprintly.EntityList.html#dispose">dispose</a></li>
+            
+                <li data-name="sprintly.EntityList#get"><a href="sprintly.EntityList.html#get">get</a></li>
+            
+                <li data-name="sprintly.EntityList#onChanged"><a href="sprintly.EntityList.html#onChanged">onChanged</a></li>
+            
+                <li data-name="sprintly.EntityList#size"><a href="sprintly.EntityList.html#size">size</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="sprintly.Product">
+            <span class="title">
+                <a href="sprintly.Product.html">sprintly.Product</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="sprintly.Product.EventObject"><a href="sprintly.Product.html#EventObject">EventObject</a></li>
+            
+                <li data-name="sprintly.Product.schema"><a href="sprintly.Product.html#schema">schema</a></li>
+            
+                <li data-name="sprintly.Product#db"><a href="sprintly.Product.html#db">db</a></li>
+            
+                <li data-name="sprintly.Product#hibernatePeriod"><a href="sprintly.Product.html#hibernatePeriod">hibernatePeriod</a></li>
+            
+                <li data-name="sprintly.Product#Item"><a href="sprintly.Product.html#Item">Item</a></li>
+            
+                <li data-name="sprintly.Product#onReady"><a href="sprintly.Product.html#onReady">onReady</a></li>
+            
+                <li data-name="sprintly.Product#People"><a href="sprintly.Product.html#People">People</a></li>
+            
+                <li data-name="sprintly.Product#product"><a href="sprintly.Product.html#product">product</a></li>
+            
+                <li data-name="sprintly.Product#refractoryPeriod"><a href="sprintly.Product.html#refractoryPeriod">refractoryPeriod</a></li>
+            
+                <li data-name="sprintly.Product#service"><a href="sprintly.Product.html#service">service</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="sprintly.Product#add"><a href="sprintly.Product.html#add">add</a></li>
+            
+                <li data-name="sprintly.Product#dispose"><a href="sprintly.Product.html#dispose">dispose</a></li>
+            
+                <li data-name="sprintly.Product#get"><a href="sprintly.Product.html#get">get</a></li>
+            
+                <li data-name="sprintly.Product#getEntityByName"><a href="sprintly.Product.html#getEntityByName">getEntityByName</a></li>
+            
+                <li data-name="sprintly.Product#list"><a href="sprintly.Product.html#list">list</a></li>
+            
+                <li data-name="sprintly.Product#put"><a href="sprintly.Product.html#put">put</a></li>
+            
+                <li data-name="sprintly.Product#remove"><a href="sprintly.Product.html#remove">remove</a></li>
+            
+                <li data-name="sprintly.Product#request"><a href="sprintly.Product.html#request">request</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+        <li class="item" data-name="sprintly.Service">
+            <span class="title">
+                <a href="sprintly.Service.html">sprintly.Service</a>
+                
+            </span>
+            <ul class="members itemMembers">
+            
+            <span class="subtitle">Members</span>
+            
+                <li data-name="sprintly.Service.BASE_URL"><a href="sprintly.Service.html#BASE_URL">BASE_URL</a></li>
+            
+                <li data-name="sprintly.Service#authHeader"><a href="sprintly.Service.html#authHeader">authHeader</a></li>
+            
+                <li data-name="sprintly.Service#products"><a href="sprintly.Service.html#products">products</a></li>
+            
+                <li data-name="sprintly.Service#username"><a href="sprintly.Service.html#username">username</a></li>
+            
+            </ul>
+            <ul class="typedefs itemMembers">
+            
+            </ul>
+            <ul class="methods itemMembers">
+            
+            <span class="subtitle">Methods</span>
+            
+                <li data-name="sprintly.Service#getProfile"><a href="sprintly.Service.html#getProfile">getProfile</a></li>
+            
+                <li data-name="sprintly.Service#listProducts"><a href="sprintly.Service.html#listProducts">listProducts</a></li>
+            
+                <li data-name="sprintly.Service#login"><a href="sprintly.Service.html#login">login</a></li>
+            
+                <li data-name="sprintly.Service#onNetwork"><a href="sprintly.Service.html#onNetwork">onNetwork</a></li>
+            
+                <li data-name="sprintly.Service#request"><a href="sprintly.Service.html#request">request</a></li>
+            
+                <li data-name="sprintly.Service#setProfile"><a href="sprintly.Service.html#setProfile">setProfile</a></li>
+            
+            </ul>
+            <ul class="events itemMembers">
+            
+            </ul>
+        </li>
+    
+    </ul>
+</div>
+    <div class="main">
+        <h1 class="page-title" data-filename="service.js.html">Source: service.js</h1>
+        
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source"><code>/**
+ * @fileOverview HTTP transport service to sprintly backend.
+ *
+ * @author kyawtun@yathit.com (Kyaw Tun)
+ */
+
+
+
+/**
+ * Create sprint.ly service.
+ * @param {string=} baseUrl Base URL to make backend request.
+ * @constructor
+ */
+sprintly.Service = function(baseUrl) {
+  /**
+   * @type {?string}
+   * @protected
+   */
+  this.username = null;
+  /**
+   * @type {?string}
+   * @protected
+   */
+  this.authHeader = null;
+  /**
+   * List of products.
+   * @type {Array.&lt;Sprintly.Product>}
+   */
+  this.products = null;
+
+  this.baseUrl = baseUrl || sprintly.Service.BASE_URL;
+};
+
+
+/**
+ * @define {string} sprint.ly default backend base URL.
+ */
+sprintly.Service.BASE_URL = 'http://127.0.0.1:8000/api/';
+
+
+/**
+ * Send an HTTP request to sprint.ly backend.
+ * @param {{
+ *   path: string,
+ *   method: ?string,
+ *   params: ?Object,
+ *   headers: ?Object,
+ *   body: string|Object,
+ *   callback: Function
+ * }} options
+ */
+sprintly.Service.prototype.request = function(options) {
+  if (!options.callback) {
+    options.callback = function() {};
+  }
+  if (!this.authHeader) {
+    var e = new Error('Not login');
+    e.name = 'LoginError';
+    options.callback(false, e);
+    return;
+  }
+
+  var me = this;
+
+  var xhr = new XMLHttpRequest();
+  var method = options.method || 'GET';
+  var query = [];
+  var params = options.params || {};
+  var url = me.baseUrl + options.path;
+  for (var q in params) {
+    query.push(q + '=' + encodeURIComponent(params[q]));
+  }
+  url += '?' + query.join('&amp;');
+  xhr.open(method, url, true);
+  xhr.setRequestHeader('Authorization', me.authHeader);
+  if (options.headers) {
+    for (var name in options.headers) {
+      xhr.setRequestHeader(name, options.headers[name]);
+    }
+  }
+  xhr.onload = function(e) {
+    var raw = {
+      status: xhr.status,
+      statusText: xhr.statusText,
+      raw: xhr.responseText,
+      headers: {}
+    };
+    var json;
+    try {
+      json = JSON.parse(xhr.responseText);
+    } catch (e) {
+      json = null;
+    }
+    var header_lines = xhr.getAllResponseHeaders().split('\n');
+    for (var i = 0; i &lt; header_lines.length; i++) {
+      var idx = header_lines[i].indexOf(':');
+      if (idx > 0) {
+        var name = header_lines[i].substr(0, idx).toLowerCase();
+        var value = header_lines[i].substr(idx + 1).trim();
+        raw.headers[name] = value;
+      }
+    }
+    xhr = null;
+    options.callback(json, raw);
+    me.onNetwork({
+      type: 'receive',
+      url: url,
+      request: options,
+      json: json,
+      respond: raw
+    });
+  };
+  xhr.send(options.body);
+  this.onNetwork({
+    type: 'send',
+    url: url,
+    request: options
+  });
+};
+
+
+/**
+ * Get list of products.
+ * @param {function(Array.&lt;Sprintly.Product>)} callback callback for list of products.
+ */
+sprintly.Service.prototype.listProducts = function(callback) {
+  return this.request({
+    path: 'products.json',
+    callback: callback
+  });
+};
+
+
+/**
+ * Login to server.
+ * Technically login is not required. Here we are getting ready with default product list.
+ * @param {string} user sprint.ly user id.
+ * @param {string} password sprint.ly password or API key.
+ * @return {Promise} resolve with list of product on login, reject with `Error`.
+ */
+sprintly.Service.prototype.login = function(user, password) {
+  var me = this;
+  this.authHeader = 'Basic ' + btoa(user + ':' + password);
+  return new Promise(function(resolve, reject) {
+    me.listProducts(function(arr) {
+      if (arr) {
+        me.products = arr;
+        me.username = user;
+        resolve(arr);
+      } else {
+        me.authHeader = null;
+        reject(new Error('LoginFail'));
+      }
+    });
+  });
+
+};
+
+
+/**
+ * Handle on network events.
+ * @param {Object} ev network event.
+ */
+sprintly.Service.prototype.onNetwork = function(ev) {};
+
+
+/**
+ * Set user profile.
+ * @param {Object} profile
+ */
+sprintly.Service.prototype.setProfile = function(profile) {
+  this.authHeader = profile.authentication;
+  this.username = profile.username;
+  this.products = profile.products;
+};
+
+
+/**
+ * Get user profile.
+ * @return {Object} user profile.
+ */
+sprintly.Service.prototype.getProfile = function() {
+  return {
+    authentication: this.authHeader,
+    username: this.username,
+    products: this.products
+  };
+};
+
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+        
+
+        <footer>
+            <div>Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha9</a> on Fri Jul 18 2014 17:39:28 GMT+0800 (SGT)</div>
+            Powered by <a href="http://dev.yathit.com">YDN-DB</a>. <a href="https://github.com/yathit/sprintly-service">Project home</a>. Product of Yathit.
+        </footer>
+    </div>
+</div>
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+<script src="scripts/main.js"></script>
+</body>
+</html>
