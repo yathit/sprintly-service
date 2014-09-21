@@ -11,7 +11,7 @@ Target browsers are Chrome 35+, Firefox 30+, Safari 8+ and IE 18+.
 Documentation
 -------------
 
-See generated [API documentation](http://dev.yathit.com/sprintly/api-doc/index.html).
+See generated [API documentation](http://yathit.github.io/sprintly-service/doc/index.html).
 
 Check out [sprint.ly offline app](http://yathit.github.io/sprintly-service/sprintly-offline-app.html)
 
